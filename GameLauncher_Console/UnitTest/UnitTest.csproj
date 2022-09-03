@@ -18,7 +18,8 @@
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>xcopy /s /e /y "$(SolutionDir)GameLauncher_Console\Database\*.*" "$(ProjectDir)$(OutDir)."</PostBuildEvent>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <Authors>glc</Authors>
   </PropertyGroup>
 </Project>

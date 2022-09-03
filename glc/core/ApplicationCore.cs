@@ -115,14 +115,15 @@ namespace core
 
         /// <summary>
         /// Load the plugins found in the "platforms" folder.
-        /// Either load the plaftorms from the database (if exist) or
+        /// Either load the platforms from the database (if exist) or
         /// create default instance and insert into the database
         /// </summary>
         /// <returns>True on initialise success</returns>
         private bool InitialisePlatforms()
         {
             var pluginLoader = new PluginLoader<CPlatformFactory<CPlatform>>();
-            var plugins = pluginLoader.LoadAll(@"C:\dev\GameHub\glc\glc\bin\Debug\net6.0\platforms"); // TODO: path
+            //var plugins = pluginLoader.LoadAll(@"C:\dev\GameHub\glc\glc\bin\Debug\net6.0\platforms"); // TODO: path
+            var plugins = pluginLoader.LoadAll(@Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "platforms"));
             CLogger.LogInfo($"Loaded {plugins.Count} plugin(s)");
 
             foreach(var plugin in plugins)
