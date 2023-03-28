@@ -545,6 +545,10 @@ namespace GameLauncher_Console
                         icon = new Icon(Properties.Resources._26, res, res);
                     else if (platform.StartsWith(GetPlatformString(27)))
                         icon = new Icon(Properties.Resources._27, res, res);
+                    else if (platform.StartsWith(GetPlatformString(28)))
+                        icon = new Icon(Properties.Resources._28, res, res);
+                    else if (platform.StartsWith(GetPlatformString(29)))
+                        icon = new Icon(Properties.Resources._29, res, res);
                     else if (platform.Equals(CConfig.GetConfigString(CConfig.CFG_TXTCFGT))) // Settings
                         icon = new Icon(Properties.Resources.settings, res, res);
                     else

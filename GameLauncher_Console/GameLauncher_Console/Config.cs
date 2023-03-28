@@ -166,6 +166,7 @@ namespace GameLauncher_Console
 		public const string CFG_SYNCLEG		= "flag_sync_legendary_saves";
 		public const string CFG_USEEGL		= "flag_use_epic_launcher";
 		public const string CFG_USEGAL		= "flag_use_gog_galaxy_launcher";
+		public const string CFG_USEHUM		= "flag_use_humble_launcher";
 		public const string CFG_USELEG		= "flag_use_legendary_for_epic";
 #if DEBUG
 		public const string CFG_UWPLIST		= "list_show_uwp_titles";

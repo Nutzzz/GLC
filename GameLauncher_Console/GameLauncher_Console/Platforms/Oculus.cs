@@ -94,13 +94,15 @@ namespace GameLauncher_Console
 			Dictionary<ulong, string> exePaths = new();
 			string db = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), OCULUS_DB);
 
-			using (RegistryKey key = Registry.CurrentUser.OpenSubKey(OCULUS_LIBS, RegistryKeyPermissionCheck.ReadSubTree))
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                RegistryView.Registry64).OpenSubKey(OCULUS_LIBS, RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
 			{
 				if (key != null)
 				{
 					foreach (string lib in key.GetSubKeyNames())
 					{
-						using RegistryKey key2 = Registry.CurrentUser.OpenSubKey(Path.Combine(OCULUS_LIBS, lib), RegistryKeyPermissionCheck.ReadSubTree);
+						using RegistryKey key2 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                            RegistryView.Registry64).OpenSubKey(Path.Combine(OCULUS_LIBS, lib), RegistryKeyPermissionCheck.ReadSubTree); // HKCU64
 						libPaths.Add(GetRegStrVal(key2, OCULUS_LIBPATH));
 					}
 				}

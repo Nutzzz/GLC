@@ -20,8 +20,8 @@ namespace GameLauncher_Console
 		public const GamePlatform ENUM			= GamePlatform.BigFish;
 		//public const string START_GAME		= "LaunchGame.bfg";
 		private const string BIGFISH_PREFIX		= "BFG-";
-		private const string BIGFISH_REG		= @"SOFTWARE\WOW6432Node\Big Fish Games\Client"; // HKLM32
-		private const string BIGFISH_GAMES		= @"SOFTWARE\WOW6432Node\Big Fish Games\Persistence\GameDB"; // HKLM32
+		private const string BIGFISH_REG		= @"SOFTWARE\Big Fish Games\Client"; // HKLM32
+		private const string BIGFISH_GAMES		= @"SOFTWARE\Big Fish Games\Persistence\GameDB"; // HKLM32
 		private const string BIGFISH_ID			= "WrapID";
 		private const string BIGFISH_PATH		= "ExecutablePath";
 		private const string BIGFISH_CASINO_ID	= "F7315T1L1";
@@ -38,7 +38,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-				using RegistryKey key = Registry.LocalMachine.OpenSubKey(BIGFISH_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
+				using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+					RegistryView.Registry32).OpenSubKey(BIGFISH_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
 				string launcherPath = Path.Combine(GetRegStrVal(key, "InstallationPath"), "bfgclient.exe");
 				if (File.Exists(launcherPath))
 					Process.Start(launcherPath);
@@ -78,7 +79,8 @@ namespace GameLauncher_Console
 			List<RegistryKey> keyList;
 			string strPlatform = GetPlatformString(ENUM);
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(BIGFISH_GAMES, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(BIGFISH_GAMES, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (key == null)
 				{
@@ -134,7 +136,8 @@ namespace GameLauncher_Console
 						//CLogger.LogDebug("    LastActionTime: " + BitConverter.ToString(dateData) + " -> " + lastRun.ToShortDateString());
 
 						List<RegistryKey> unKeyList;
-						using (RegistryKey key2 = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+						using (RegistryKey key2 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+							RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 						{
 							if (key2 != null)
 							{

@@ -10,7 +10,7 @@ using Logger;
 //using Microsoft.Extensions.Logging;
 using System;
 //using System.Collections.Generic;
-//using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 //using System.Linq;
 using System.Reflection;
@@ -43,18 +43,15 @@ namespace GameLauncher_Console
 			Application.EnableVisualStyles();
 			//Application.SetCompatibleTextRenderingDefault(false);
 
-			string currentPath = Path.GetDirectoryName(AppContext.BaseDirectory);
-			string imgFolder = Path.Combine(currentPath, IMAGE_FOLDER_NAME);
-			string gameFolder = Path.Combine(currentPath, GAME_FOLDER_NAME);
+			string imgFolder = Path.Combine(CDock.currentPath, IMAGE_FOLDER_NAME);
+			string gameFolder = Path.Combine(CDock.currentPath, GAME_FOLDER_NAME);
 
-			CLogger.Configure(Path.Combine(currentPath,
+			CLogger.Configure(Path.Combine(CDock.currentPath,
 				Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]) + ".log")); // Create a log file
 			if (!Directory.Exists(imgFolder)) Directory.CreateDirectory(imgFolder);
 			if (!Directory.Exists(gameFolder)) Directory.CreateDirectory(gameFolder);
 
-			CLogger.LogInfo("{0} version {1}",
-				Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title,
-				Assembly.GetEntryAssembly().GetName().Version.ToString());
+			CLogger.LogInfo("{0} version {1}", CDock.title, CDock.version);
 			CLogger.LogInfo("*************************");
 
 			if (Console.IsOutputRedirected)

@@ -23,7 +23,7 @@ namespace GameLauncher_Console
         public const string UNINST_GAME			= @"Battle.net\Agent\Blizzard Uninstaller.exe"; // ProgramData
         //private const string BATTLE_NET		= "Battle.net";
         //private const string BATTLE_NET_UNREG	= "Battle.net"; // HKLM32 Uninstall
-        //private const string BATTLE_NET_REG	= @"SOFTWARE\WOW6432Node\Blizzard Entertainment\Battle.net"; // HKLM32
+        //private const string BATTLE_NET_REG	= @"SOFTWARE\Blizzard Entertainment\Battle.net"; // HKLM32
         private const string BATTLE_NET_CFG		= @"Battle.net\Battle.net.config"; // AppData\Roaming
         private const string BATTLE_NET_DB		= @"Battle.net\Agent\product.db"; // ProgramData
         private const string BATTLE_NET_DATA	= @"Battle.net\Agent\data\cache"; // ProgramData
@@ -242,7 +242,8 @@ namespace GameLauncher_Console
             /*
 			List<RegistryKey> keyList;
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
+				RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (key == null)
 				{
@@ -303,7 +304,7 @@ namespace GameLauncher_Console
         }
     }
 
-// The below is used for reading the Battle.net ProtoBuf database, duplicated from:
+// The below is used for reading the Battle.net ProtoBuf database, based on:
 // https://github.com/dafzor/bnetlauncher/blob/master/bnetlauncher/Utils/ProductDb.cs
 // Copyright (C) 2016-2019 madalien.com
 

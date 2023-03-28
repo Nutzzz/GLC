@@ -2,8 +2,10 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Windows.Media.Animation;
 
 namespace GameLauncher_Console
 {
@@ -14,8 +16,7 @@ namespace GameLauncher_Console
 	[SupportedOSPlatform("windows")]
 	public static class CRegScanner
 	{
-		public const string NODE64_REG				= @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-		public const string NODE32_REG				= @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
+		public const string UNINSTALL_REG			= @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 		public const string GAME_DISPLAY_NAME		= "DisplayName";
 		public const string GAME_DISPLAY_ICON		= "DisplayIcon";
 		public const string GAME_INSTALL_PATH		= "InstallPath";
@@ -196,6 +197,119 @@ namespace GameLauncher_Console
 				CLogger.LogError(e);
 			}
 			return null;
+		}
+
+        /// <summary>
+        /// Extract hive, key, and value separately from a registry path
+        /// </summary>
+        /// <param name="key">The registry key</param>
+        /// <param name="valName">The registry value name</param>
+        /// <returns>the value's data as a string</returns>
+        public static RegistryKey ToRegKey(ref string key, out string valName)
+		{
+			valName = Path.GetFileName(key);
+			key = Path.GetDirectoryName(key);
+			if (key.ToUpper().StartsWith(@"HKEY_CLASSES_ROOT\"))
+			{
+				key = key[18..];
+				return Registry.ClassesRoot;
+			}
+            if (key.ToUpper().StartsWith(@"HKCR\"))
+            {
+                key = key[5..];
+                return Registry.ClassesRoot;
+            }
+            else if (key.ToUpper().StartsWith(@"HKEY_CURRENT_CONFIG\"))
+			{
+				key = key[20..];
+				return Registry.CurrentConfig;
+			}
+            else if (key.ToUpper().StartsWith(@"HKCC\"))
+            {
+                key = key[5..];
+                return Registry.CurrentConfig;
+            }
+            else if (key.ToUpper().StartsWith(@"HKEY_CURRENT_USER\SOFTWARE\WOW6432NODE\"))
+            {
+                key = @"SOFTWARE\" + key[39..];
+				return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKCU\SOFTWARE\WOW6432NODE\"))
+            {
+                key = @"SOFTWARE\" + key[26..];
+                return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKCU64\"))
+            {
+                key = key[7..];
+                return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
+            }
+            else if (key.ToUpper().StartsWith(@"HKCU32\"))
+			{
+                key = key[7..];
+                return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKEY_CURRENT_USER\"))
+            {
+                key = key[18..];
+                return Registry.CurrentUser;
+            }
+            else if (key.ToUpper().StartsWith(@"HKCU\"))
+			{
+				key = key[5..];
+				return Registry.CurrentUser;
+			}
+            else if (key.ToUpper().StartsWith(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\"))
+            {
+                key = @"SOFTWARE\" + key[40..];
+				return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKLM\SOFTWARE\WOW6432NODE\"))
+            {
+                key = @"SOFTWARE\" + key[26..];
+                return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKLM64\"))
+            {
+                key = key[7..];
+                return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
+            }
+            else if (key.ToUpper().StartsWith(@"HKLM32\"))
+            {
+                key = key[7..];
+                return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+            }
+            else if (key.ToUpper().StartsWith(@"HKEY_LOCAL_MACHINE\"))
+            {
+                key = key[19..];
+                return Registry.LocalMachine;
+            }
+            else if (key.ToUpper().StartsWith(@"HKLM\"))
+			{
+				key = key[5..];
+				return Registry.LocalMachine;
+			}
+			else if (key.ToUpper().StartsWith(@"HKEY_PERFORMANCE_DATA\"))
+			{
+				key = key[22..];
+				return Registry.PerformanceData;
+			}
+            else if (key.ToUpper().StartsWith(@"HKPD\"))
+            {
+                key = key[5..];
+                return Registry.PerformanceData;
+            }
+            else if (key.ToUpper().StartsWith(@"HKEY_USERS\"))
+			{
+				key = key[11..];
+				return Registry.Users;
+			}
+            else if (key.ToUpper().StartsWith(@"HKU\"))
+            {
+                key = key[4..];
+                return Registry.Users;
+            }
+            return null;
 		}
 	}
 }

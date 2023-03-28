@@ -19,7 +19,7 @@ namespace GameLauncher_Console
 		public const string START_GAME		= PROTOCOL + "launch/";
 		public const string UPLAY_PREFIX	= "Uplay Install ";
 		private const string UPLAY_UNREG	= "Uplay"; // HKLM32 Uninstall
-		//private const string UPLAY_REG	= @"SOFTWARE\WOW6432Node\Ubisoft\Launcher"; // HKLM32
+		//private const string UPLAY_REG	= @"SOFTWARE\Ubisoft\Launcher"; // HKLM32
 
 		private static readonly string _name = Enum.GetName(typeof(GamePlatform), ENUM);
 
@@ -75,7 +75,8 @@ namespace GameLauncher_Console
 			string launcherPath = "";
 			string strPlatform = GetPlatformString(ENUM);
 
-			using (RegistryKey launcherKey = Registry.LocalMachine.OpenSubKey(Path.Combine(NODE32_REG, UPLAY_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(Path.Combine(UNINSTALL_REG, UPLAY_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (launcherKey == null)
 				{
@@ -85,7 +86,8 @@ namespace GameLauncher_Console
 				launcherPath = GetRegStrVal(launcherKey, GAME_INSTALL_LOCATION);
 			}
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				keyList = FindGameFolders(key, UPLAY_PREFIX);
 

@@ -47,7 +47,7 @@ namespace GameLauncher_Console
 		public const char SEPARATOR_SYMBOL = '│';
 		public const char RATING_SYMBOL = '*';
 
-		public static readonly string FILENAME = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
+		public static readonly string filename = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
 
 		CConsoleHelper m_dockConsole;
 		private int nColumnCount = 2;
@@ -57,8 +57,12 @@ namespace GameLauncher_Console
 		public static int m_nCurrentSelection = 0;
 
 		public static readonly string currentPath = Path.GetDirectoryName(AppContext.BaseDirectory);
-		public static readonly string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
-		public static readonly List<string> supportedImages = new() { "ICO", "PNG", "JPG", "JPE", "JPEG", "GIF", "BMP", "TIF", "TIFF", "EPR", "EPRT" };
+        public static readonly string title = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
+        //public static readonly string product = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>().Product;
+        public static readonly string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+        public static readonly string description = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
+
+        public static readonly List<string> supportedImages = new() { "ICO", "PNG", "JPG", "JPE", "JPEG", "GIF", "BMP", "TIF", "TIFF", "EPR", "EPRT", "EXI", "EXIF" };
 		public static bool noInteractive = false;
 		public static Size sizeIcon;
 		public static Size sizeImage;
@@ -72,8 +76,8 @@ namespace GameLauncher_Console
 		//  0|-------|---------|---------|---------|---------|---------|---------|---------|80
 			" This program will scan your system for installed video games and display",
 			" them as a list. The following platforms are supported:",
-			" * Amazon * Battle.net * Big Fish * EA * Epic * GOG * Indiegala * itch",
-			" * Legacy * Oculus * Paradox * Plarium * Riot * Steam * Ubisoft * Wargaming",
+			" *Amazon *BattleNet *BigFish *EA *Epic *GameJolt *GOG *Humble *Indiegala *itch",
+			" *Legacy *Oculus *Paradox *Plarium *Riot *Rockstar *Steam *Ubisoft *Wargaming",
 			"",
 			" The games list and configuration are stored in .json files in the same folder",
 			" as this program. You can manually add games by placing a shortcut (.lnk) in",
@@ -101,11 +105,13 @@ namespace GameLauncher_Console
 			//platforms.AddSupportedPlatform(new PlatformCustom());		// See CPlatform.ScanGames()
 			platforms.AddSupportedPlatform(new PlatformEA());
 			platforms.AddSupportedPlatform(new PlatformEpic());
-			platforms.AddSupportedPlatform(new PlatformGOG());
-			platforms.AddSupportedPlatform(new PlatformIGClient());
+            platforms.AddSupportedPlatform(new PlatformGameJolt());
+            platforms.AddSupportedPlatform(new PlatformGOG());
+            platforms.AddSupportedPlatform(new PlatformHumble());
+            platforms.AddSupportedPlatform(new PlatformIGClient());
 			platforms.AddSupportedPlatform(new PlatformItch());
 			platforms.AddSupportedPlatform(new PlatformLegacy());
-			platforms.AddSupportedPlatform(new PlatformOculus());
+            platforms.AddSupportedPlatform(new PlatformOculus());
 			platforms.AddSupportedPlatform(new PlatformParadox());
 			platforms.AddSupportedPlatform(new PlatformPlarium());
 			platforms.AddSupportedPlatform(new PlatformRiot());
@@ -115,6 +121,7 @@ namespace GameLauncher_Console
 			platforms.AddSupportedPlatform(new PlatformWargaming());
 #if DEBUG
 			platforms.AddSupportedPlatform(new PlatformMicrosoft());	// an experiment for now
+			//platforms.AddSupportedPlatform(new PlatformMisc());			// another experiment
 #endif
 			bool import, parseError = false;
 			import = CJsonWrapper.ImportFromINI(out CConfig.ConfigVolatile cfgv, out CConfig.Hotkeys keys, out CConfig.Colours cols);
@@ -180,10 +187,10 @@ namespace GameLauncher_Console
 					{
 						if (OperatingSystem.IsWindows())
 						{
-							if (PathEnvironmentUpdate.Add(Path.GetDirectoryName(AppContext.BaseDirectory), false))
+							if (PathEnvironmentUpdate.Add(currentPath, false))
 							{
 								CLogger.LogInfo("Added program location to PATH.");
-								Console.WriteLine("Added {0}.exe location to your PATH environment variable.", FILENAME);
+								Console.WriteLine("Added {0}.exe location to your PATH environment variable.", filename);
 							}
 							else
 							{
@@ -896,7 +903,7 @@ namespace GameLauncher_Console
 									//DownloadCustomImage(selectedGame.Title, PlatformBattlenet.GetIconUrl(selectedGame), true);
 									break;
 								case GamePlatform.Rockstar:
-									//DownloadCustomImage(selectedGame.Title, PlatformRockstar.GetIconUrl(selectedGame), true);
+									DownloadCustomImage(selectedGame.Title, PlatformRockstar.GetIconUrl(selectedGame), true);
 									break;
 								case GamePlatform.Amazon:
 									DownloadCustomImage(selectedGame.Title, PlatformAmazon.GetIconUrl(selectedGame), true);
@@ -913,7 +920,7 @@ namespace GameLauncher_Console
 								case GamePlatform.Paradox:
 									//DownloadCustomImage(selectedGame.Title, PlatformParadox.GetIconUrl(selectedGame), true);
 									break;
-								case GamePlatform.Plarium:
+                                case GamePlatform.Plarium:			// Webp won't be supported until we finish switch to a cross-platform graphics library
 									//DownloadCustomImage(selectedGame.Title, PlatformPlarium.GetIconUrl(selectedGame), true);
 									break;
 								case GamePlatform.Twitch:           // deprecated, never implemented
@@ -937,7 +944,13 @@ namespace GameLauncher_Console
 								case GamePlatform.Riot:
 									//DownloadCustomImage(selectedGame.Title, PlatformRiot.GetIconUrl(selectedGame), true);
 									break;
-								default:
+                                case GamePlatform.GameJolt:
+                                    DownloadCustomImage(selectedGame.Title, PlatformGameJolt.GetIconUrl(selectedGame), true);
+                                    break;
+                                case GamePlatform.Humble:			// avif (AV1) won't be supported until we finish switch to a cross-platform graphics library
+                                    //DownloadCustomImage(selectedGame.Title, PlatformHumble.GetIconUrl(selectedGame), true);
+                                    break;
+                                default:
 									break;
 							}
 							continue;
@@ -1024,7 +1037,13 @@ namespace GameLauncher_Console
 								case GamePlatform.Riot:
 									PlatformRiot.Launch();
 									break;
-								default:
+                                case GamePlatform.GameJolt:
+                                    PlatformGameJolt.Launch();
+                                    break;
+                                case GamePlatform.Humble:
+                                    PlatformHumble.Launch();
+                                    break;
+                                default:
 									break;
 							}
 						}
@@ -1058,12 +1077,29 @@ namespace GameLauncher_Console
 #if !DEBUG
 						if (!StartGame(selectedGame))
 						{
-							SetFgColour(cols.errorCC, cols.errorLtCC);
-							CLogger.LogWarn("Remove game from file.");
-							Console.WriteLine("{0} will be removed from the list.", selectedGame.Title);
-							Console.ResetColor();
-							RemoveGame(selectedGame);
-						}
+							if (noInteractive)
+							{
+                                SetFgColour(cols.errorCC, cols.errorLtCC);
+                                CLogger.LogWarn("Remove game from file.");
+                                Console.WriteLine("{0} will be removed from the list.", selectedGame.Title);
+                                Console.ResetColor();
+                                RemoveGame(selectedGame);
+							}
+							else
+							{
+                                //string answer = InputPrompt(string.Format("{0} not found! Remove from list? [y/n] >>> ", selectedGame.Title), cols);
+                                //ClearInputLine(cols);
+                                SetFgColour(cols.inputCC, cols.inputLtCC);
+                                Console.Write("{0} not found! Remove from list? [y/n] >>> ", selectedGame.Title);
+                                string answer = Console.ReadLine();
+                                if (answer[0] == 'Y' || answer[0] == 'y')
+                                {
+                                    CLogger.LogWarn("Remove game from file.");
+                                    RemoveGame(selectedGame);
+                                }
+                                Console.ResetColor();
+                            }
+                        }
 #else
 						// DEBUG MODE
 						// Make sure we've written to configuration file *before* this point, as we're setting overrides to CConfig.config below
@@ -1092,7 +1128,7 @@ namespace GameLauncher_Console
 							cfgv.imageBorder = true;
 							CConfig.SetConfigValue(CConfig.CFG_IMGRTIO, false);
 						}
-						if (cfgv.imageSize > 0)
+						if (OperatingSystem.IsWindows() && cfgv.imageSize > 0)
 						{
 							CConsoleImage.GetImageProperties(cfgv.imageSize, (ushort)CConfig.GetConfigNum(CConfig.CFG_IMGPOS), out sizeImage, out locImage);
 							if (cfgv.imageBorder)
@@ -1375,6 +1411,14 @@ namespace GameLauncher_Console
 						//if (InputInstall(game.Title, cols))
 							return (PlatformRiot.InstallGame(game) != 0);		// [Doesn't currently show not-installed games]
 						//return false;
+					case GamePlatform.GameJolt:
+						//if (InputInstall(game.Title, cols))
+							return (PlatformGameJolt.InstallGame(game) != 0);	// [Doesn't currently show not-installed games]
+						//return false;
+					case GamePlatform.Humble:
+						//if (InputInstall(game.Title, cols))
+							return (PlatformHumble.InstallGame(game) != 0);		// [Doesn't currently show not-installed games]
+						//return false;
 					default:
 						//SetFgColour(cols.errorCC, cols.errorLtCC);
 						CLogger.LogWarn("Install not supported for this platform.");
@@ -1524,7 +1568,13 @@ namespace GameLauncher_Console
 					case GamePlatform.Riot:
 						PlatformRiot.StartGame(game);
 						break;
-					default:
+                    case GamePlatform.GameJolt:
+                        PlatformGameJolt.StartGame(game);
+                        break;
+                    case GamePlatform.Humble:
+                        PlatformHumble.StartGame(game);
+                        break;
+                    default:
 						CLogger.LogInfo($"Launch: {game.Launch}");
 						if (OperatingSystem.IsWindows())
 							_ = StartShellExecute(game.Launch);
@@ -1576,8 +1626,7 @@ namespace GameLauncher_Console
 
 			Console.Clear();
 			WriteWithBreak(ref line, height, cols.titleCC, cols.titleLtCC, cols.titleCC, cols.titleLtCC,
-				string.Format("{0} version {1}", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>().Product,
-				Assembly.GetEntryAssembly().GetName().Version.ToString()));
+				string.Format("{0} version {1}", title, version));
 			foreach (string str in m_helpLines)
 			{
 				WriteWithBreak(ref line, height, cols.entryCC, cols.entryLtCC, cols.titleCC, cols.titleLtCC, str);
@@ -1780,19 +1829,17 @@ namespace GameLauncher_Console
 			Console.WriteLine();
 			//				  0|-------|---------|---------|---------|---------|---------|---------|---------|80
 			SetFgColour(cols.titleCC);
-			Console.WriteLine("{0} version {1}",
-				Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>().Product,
-				Assembly.GetEntryAssembly().GetName().Version.ToString());
-			Console.WriteLine(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyDescriptionAttribute>().Description);
+			Console.WriteLine("{0} version {1}", title, version);
+			Console.WriteLine(description);
 			Console.WriteLine();
 			Console.WriteLine("Usage:");
 			Console.ResetColor();
 			Console.WriteLine("Start in interactive mode by running with no parameters,");
 			Console.WriteLine("or launch a game by entering search on the command-line, e.g.:");
-			Console.WriteLine(" .\\{0} \"My Game\"", FILENAME);
+			Console.WriteLine(" .\\{0} \"My Game\"", filename);
 			Console.WriteLine("If there are multiple results in command-line mode, to select an item from a");
 			Console.WriteLine("prior search, enter e.g.:");
-			Console.WriteLine(" .\\{0} /2", FILENAME);
+			Console.WriteLine(" .\\{0} /2", filename);
 			Console.WriteLine();
 			SetFgColour(cols.titleCC);
 			Console.WriteLine("Other parameters:");
@@ -1808,7 +1855,7 @@ namespace GameLauncher_Console
 			//Console.WriteLine("/U \"My Game\": Uninstall game");						// TODO
 			//Console.WriteLine("/A myalias \"My Game Name\": Change game's alias");	// TODO
 			Console.WriteLine("   /C : Toggle command-line only mode");
-			Console.WriteLine("   /P : Add {0}.exe location to your path", FILENAME);
+			Console.WriteLine("   /P : Add {0}.exe location to your path", filename);
 			Console.WriteLine("/?|/H : Display this help");
 			if (parent.Equals("explorer"))
 			{
@@ -2239,7 +2286,8 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public static Guid GetGuid()
 		{
-            using RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Cryptography", RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+            using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry64).OpenSubKey("SOFTWARE\\Microsoft\\Cryptography", RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
             return Guid.Parse((string)key.GetValue("MachineGuid"));
         }
 

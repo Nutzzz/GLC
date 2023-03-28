@@ -373,6 +373,18 @@ namespace GameLauncher_Console.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool flag_use_humble_launcher {
+            get {
+                return ((bool)(this["flag_use_humble_launcher"]));
+            }
+            set {
+                this["flag_use_humble_launcher"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool flag_use_legendary_for_epic {
             get {

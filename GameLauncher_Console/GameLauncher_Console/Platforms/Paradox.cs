@@ -19,7 +19,7 @@ namespace GameLauncher_Console
 	{
 		public const GamePlatform ENUM			= GamePlatform.Paradox;
 		public const string PROTOCOL			= "";
-		private const string PARADOX_REG		= @"SOFTWARE\WOW6432Node\Paradox Interactive\Paradox Launcher\LauncherPath"; // HKLM32
+		private const string PARADOX_REG		= @"SOFTWARE\Paradox Interactive\Paradox Launcher\LauncherPath"; // HKLM32
         private const string PARADOX_PATH		= "Path";
         //private const string PARADOX_UNREG	= "{ED2CDA1D-39E4-4CBB-992C-5C1D08672128}"; //HKLM32
         private const string PARADOX_JSON		= @"Paradox Interactive\launcher"; // AppData\Local
@@ -36,7 +36,8 @@ namespace GameLauncher_Console
         {
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                    RegistryView.Registry32).OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
                 string launcherPath = Path.Combine(GetRegStrVal(key, PARADOX_PATH), "\\Paradox Launcher.exe");
                 if (File.Exists(launcherPath))
                     Process.Start(launcherPath);
@@ -78,7 +79,8 @@ namespace GameLauncher_Console
             // Get installed games
             if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                    RegistryView.Registry32).OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
                 if (key == null)
                     CLogger.LogInfo("{0} client not found in the registry.", _name.ToUpper());
                 else

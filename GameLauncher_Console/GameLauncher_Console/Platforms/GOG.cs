@@ -26,8 +26,8 @@ namespace GameLauncher_Console
         public const string START_GAME 			= LAUNCH;
         public const string START_GAME_ARGS		= "/command=runGame /gameId=";
         public const string START_GAME_ARGS2	= "/path=";
-		private const string GOG_REG_GAMES		= @"SOFTWARE\WOW6432Node\GOG.com\Games";
-		private const string GOG_REG_CLIENT		= @"SOFTWARE\WOW6432Node\GOG.com\GalaxyClient\paths";
+		private const string GOG_REG_GAMES		= @"SOFTWARE\GOG.com\Games"; // HKLM32
+		private const string GOG_REG_CLIENT		= @"SOFTWARE\GOG.com\GalaxyClient\paths"; // HKLM32
 		private const string GOG_DB				= @"GOG.com\Galaxy\storage\galaxy-2.0.db"; // ProgramData
 		//private const string GOG_GALAXY_UNREG	= "{7258BA11-600C-430E-A759-27E2C691A335}_is1"; // HKLM32 Uninstall
 
@@ -44,7 +44,8 @@ namespace GameLauncher_Console
             if (OperatingSystem.IsWindows())
             {
                 /*
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(GOG_REG_CLIENT, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
+				    RegistryView.Registry32).OpenSubKey(GOG_REG_CLIENT, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
                 {
                     string launcherPath = Path.Combine(GetRegStrVal(key, "client"), LAUNCH);
                     if (File.Exists(launcherPath))
@@ -133,7 +134,8 @@ namespace GameLauncher_Console
 				return;
 			}
 			string launcherPath = "";
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(GOG_REG_CLIENT, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(GOG_REG_CLIENT, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				launcherPath = Path.Combine(GetRegStrVal(key, "client"), START_GAME);
 				if (!File.Exists(launcherPath))

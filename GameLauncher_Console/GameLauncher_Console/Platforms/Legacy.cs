@@ -37,7 +37,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+					RegistryView.Registry64).OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
                 Process legacyProcess = new();
                 string launcherPath = Path.Combine(Path.GetDirectoryName(GetRegStrVal(key, GAME_DISPLAY_ICON)), "Legacy Games Launcher.exe");
                 if (File.Exists(launcherPath))
@@ -80,7 +81,8 @@ namespace GameLauncher_Console
 			string strPlatform = GetPlatformString(ENUM);
 
 			// Get installed games
-			using (RegistryKey key = Registry.CurrentUser.OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                RegistryView.Registry64).OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
 			{
 				keyList = FindGameFolders(key, "");
 
@@ -109,8 +111,10 @@ namespace GameLauncher_Console
 						strLaunch = Path.Combine(exePath, exeFile);
 						if (expensiveIcons)
 						{
-                            using RegistryKey key2 = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree), // HKLM32
-                                              key3 = Registry.LocalMachine.OpenSubKey(NODE64_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+                            using RegistryKey key2 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+											      RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree), // HKLM32
+                                              key3 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+											      RegistryView.Registry64).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
                             List<RegistryKey> unList = FindGameKeys(key2, GAME_DISPLAY_NAME, strTitle, new string[] { LEG_LAUNCHER });
                             if (unList.Count <= 0)
                                 unList = FindGameKeys(key3, GAME_DISPLAY_NAME, strTitle, new string[] { LEG_LAUNCHER });

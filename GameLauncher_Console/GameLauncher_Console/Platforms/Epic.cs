@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
-//using static GameLauncher_Console.CRegScanner;
+using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
 
 namespace GameLauncher_Console

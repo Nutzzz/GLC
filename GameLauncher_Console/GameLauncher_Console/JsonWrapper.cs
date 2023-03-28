@@ -25,15 +25,15 @@ namespace GameLauncher_Console
 		};
 
 		// minimum version numbers
-		private static readonly Version MIN_CFG_VERSION		= Version.Parse("1.2.0");
-		private static readonly Version MIN_LAST_VERSION	= Version.Parse("1.1.0");
-		private static readonly Version MIN_GAME_VERSION	= Version.Parse("1.1.0");
+		private static readonly Version _min_cfg_version	= Version.Parse("1.2.0");
+		private static readonly Version _min_last_version	= Version.Parse("1.1.0");
+		private static readonly Version _min_game_version	= Version.Parse("1.1.0");
 
 		// .json filenames (they should be in the same directory as the executable)
-		private static readonly string CFG_INI_FILE			= CDock.FILENAME + ".ini";
-		private static readonly string CFGOLD_JSON_FILE		= CDock.FILENAME + "-cfg.json";
-		private static readonly string LAST_JSON_FILE		= CDock.FILENAME + "-last.json";
-		private static readonly string GAME_JSON_FILE		= CDock.FILENAME + "-games.json";
+		private static readonly string _cfg_ini_file		= CDock.filename + ".ini";
+		private static readonly string _cfgold_json_file	= CDock.filename + "-cfg.json";
+		private static readonly string _last_json_file		= CDock.filename + "-last.json";
+		private static readonly string _game_json_file		= CDock.filename + "-games.json";
 		private const string GAMEOLD_JSON_FILE				= "games.json";
 
 		// INI sections
@@ -69,11 +69,11 @@ namespace GameLauncher_Console
 		private const string LAST_ARRAY_TITLE				= "title";
 		private const string LAST_ARRAY_PERCENT				= "percent";
 
-		private static readonly string configPath	= Path.Combine(CDock.currentPath, CFG_INI_FILE);
-		private static readonly string configOldPath = Path.Combine(CDock.currentPath, CFGOLD_JSON_FILE);
-		private static readonly string searchPath	= Path.Combine(CDock.currentPath, LAST_JSON_FILE);
-		private static readonly string gamesPath	= Path.Combine(CDock.currentPath, GAME_JSON_FILE);
-		private static readonly string gamesOldPath	= Path.Combine(CDock.currentPath, GAMEOLD_JSON_FILE);
+		private static readonly string _configPath	= Path.Combine(CDock.currentPath, _cfg_ini_file);
+		private static readonly string _configOldPath = Path.Combine(CDock.currentPath, _cfgold_json_file);
+		private static readonly string _searchPath	= Path.Combine(CDock.currentPath, _last_json_file);
+		private static readonly string _gamesPath	= Path.Combine(CDock.currentPath, _game_json_file);
+		private static readonly string _gamesOldPath	= Path.Combine(CDock.currentPath, GAMEOLD_JSON_FILE);
 
 		// Configuration data
 		public static bool ImportFromINI(out CConfig.ConfigVolatile cfgv, out CConfig.Hotkeys keys, out CConfig.Colours cols)
@@ -93,21 +93,21 @@ namespace GameLauncher_Console
 
 			try
 			{
-				if (!File.Exists(configPath))
+				if (!File.Exists(_configPath))
 				{
-					if (File.Exists(configOldPath))
+					if (File.Exists(_configOldPath))
 					{
-						File.Delete(configOldPath);
-						CLogger.LogWarn("{0} is outdated. Creating new {1}...", CFGOLD_JSON_FILE, CFG_INI_FILE);
+						File.Delete(_configOldPath);
+						CLogger.LogWarn("{0} is outdated. Creating new {1}...", _cfgold_json_file, _cfg_ini_file);
 					}
 					else
-						CLogger.LogInfo("{0} is missing. Writing new defaults...", CFG_INI_FILE);
+						CLogger.LogInfo("{0} is missing. Writing new defaults...", _cfg_ini_file);
 
-					CreateNewConfigFile(configPath);
+					CreateNewConfigFile(_configPath);
 					SetConfigVolatile(ref cfgv);
 					TranslateConfig(ref keys, ref cols);
 				}
-				else if (!ImportConfig(configPath, ref cfgv, ref keys, ref cols))
+				else if (!ImportConfig(_configPath, ref cfgv, ref keys, ref cols))
 					parseError = true;
 			}
 			catch (Exception e)
@@ -131,10 +131,10 @@ namespace GameLauncher_Console
 			Version verSearch = Version.Parse("0.0");
 			try
 			{
-				if (File.Exists(searchPath))
+				if (File.Exists(_searchPath))
 				{
-					CLogger.LogInfo("{0} was found.", LAST_JSON_FILE);
-					ImportSearch(searchPath, ref verSearch, ref matches);
+					CLogger.LogInfo("{0} was found.", _last_json_file);
+					ImportSearch(_searchPath, ref verSearch, ref matches);
 				}
 			}
 			catch (Exception e)
@@ -142,7 +142,7 @@ namespace GameLauncher_Console
 				CLogger.LogError(e);
 			}
 
-			if (verSearch < MIN_LAST_VERSION)
+			if (verSearch < _min_last_version)
 				matches = new List<CMatch>();
 
 			// Game data
@@ -151,21 +151,21 @@ namespace GameLauncher_Console
 
 			try
 			{
-				if (!File.Exists(gamesPath))
+				if (!File.Exists(_gamesPath))
 				{
-					if (File.Exists(gamesOldPath))
+					if (File.Exists(_gamesOldPath))
 					{
-						File.Delete(gamesOldPath);
-						CLogger.LogWarn("{0} is outdated. Creating new {1}...", GAMEOLD_JSON_FILE, GAME_JSON_FILE);
+						File.Delete(_gamesOldPath);
+						CLogger.LogWarn("{0} is outdated. Creating new {1}...", GAMEOLD_JSON_FILE, _game_json_file);
 					}
 					else
-						CLogger.LogInfo("{0} is missing. Creating new file...", GAME_JSON_FILE);
-					CreateNewGamesFile(gamesPath);
+						CLogger.LogInfo("{0} is missing. Creating new file...", _game_json_file);
+					CreateNewGamesFile(_gamesPath);
 				}
 				else if (!(bool)CConfig.GetConfigBool(CConfig.CFG_USESCAN))
 				{
 					if (!ImportGames(
-						gamesPath,
+						_gamesPath,
 						ref nGameCount,
 						ref verGames,
 						(bool)CConfig.GetConfigBool(CConfig.CFG_USEFREQ) ? CConsoleHelper.SortMethod.cSort_Freq : 
@@ -185,7 +185,7 @@ namespace GameLauncher_Console
 
 			if (nGameCount < 1)
 			{
-				CLogger.LogInfo("{0} is empty, corrupt, or outdated. Scanning for games...", GAME_JSON_FILE);
+				CLogger.LogInfo("{0} is empty, corrupt, or outdated. Scanning for games...", _game_json_file);
 				Console.Write("Scanning for games");  // ScanGames() will add dots for each platform
 				platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), true);
 			}
@@ -226,7 +226,7 @@ namespace GameLauncher_Console
                 string strJsonData = Encoding.UTF8.GetString(stream.ToArray());
                 byte[] bytes = new UTF8Encoding(true).GetBytes(strJsonData);
 
-                using FileStream fs = File.Create(gamesPath);
+                using FileStream fs = File.Create(_gamesPath);
                 fs.Write(bytes, 0, bytes.Length);
             }
 			catch(Exception e)
@@ -269,7 +269,7 @@ namespace GameLauncher_Console
                 string strJsonData = Encoding.UTF8.GetString(stream.ToArray());
                 byte[] bytes = new UTF8Encoding(true).GetBytes(strJsonData);
 
-                using FileStream fs = File.Create(searchPath);
+                using FileStream fs = File.Create(_searchPath);
                 fs.Write(bytes, 0, bytes.Length);
 
             }
@@ -292,7 +292,7 @@ namespace GameLauncher_Console
 
 			try
 			{
-				CIniParser ini = new(configPath);
+				CIniParser ini = new(_configPath);
 
 				ini.Write(INI_VERSION, CDock.version, VERSION_SECTION);
 				foreach (KeyValuePair<string, string> setting in CConfig.config)
@@ -399,7 +399,7 @@ namespace GameLauncher_Console
 			try
 			{
                 using JsonDocument document = JsonDocument.Parse(@strDocumentData, jsonTrailingCommas);
-                if (Version.TryParse(GetStringProperty(document.RootElement, JSON_VERSION), out version) && version < MIN_GAME_VERSION)
+                if (Version.TryParse(GetStringProperty(document.RootElement, JSON_VERSION), out version) && version < _min_game_version)
 					return true;
 
                 if (!document.RootElement.TryGetProperty(GAMES_ARRAY, out JsonElement jArrGames)) // 'games' array does not exist
@@ -498,7 +498,7 @@ namespace GameLauncher_Console
 			{
 				CIniParser ini = new(file);
 
-				if (Version.TryParse(ini.Read(INI_VERSION, VERSION_SECTION), out Version version) && (version >= MIN_CFG_VERSION))
+				if (Version.TryParse(ini.Read(INI_VERSION, VERSION_SECTION), out Version version) && (version >= _min_cfg_version))
 				{
 					foreach (KeyValuePair<string, string> setting in CConfig.config)
 					{
@@ -1014,6 +1014,7 @@ namespace GameLauncher_Console
 			SetDefaultVal(CConfig.CFG_SYNCLEG, force);
 			SetDefaultVal(CConfig.CFG_USEEGL, force);
 			SetDefaultVal(CConfig.CFG_USEGAL, force);
+			SetDefaultVal(CConfig.CFG_USEHUM, force);
 			SetDefaultVal(CConfig.CFG_USELEG, force);
 		}
 

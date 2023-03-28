@@ -67,7 +67,8 @@ namespace GameLauncher_Console
 			/*
 			string launcherPath = "";
 
-			using (RegistryKey launcherKey = Registry.CurrentUser.OpenSubKey(Path.Combine(NODE64_REG, WARGAMING_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
+			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, 
+				RegistryView.Registry64).OpenSubKey(Path.Combine(UNINSTALL_REG, WARGAMING_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
 			{
 				if (launcherKey == null)
 				{
@@ -105,7 +106,8 @@ namespace GameLauncher_Console
 				CLogger.LogError(e);
             }
 
-			using (RegistryKey key = Registry.CurrentUser.OpenSubKey(NODE64_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                RegistryView.Registry64).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
 			{
 				keyList = FindGameKeys(key, "Wargaming.net", "Publisher", new string[] { WARGAMING_UNREG });
 

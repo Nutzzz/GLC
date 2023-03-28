@@ -89,6 +89,9 @@
     <Setting Name="flag_use_gog_galaxy_launcher" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="flag_use_humble_launcher" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+	</Setting>
     <Setting Name="flag_use_legendary_for_epic" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

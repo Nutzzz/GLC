@@ -21,6 +21,7 @@ namespace GameLauncher_Console
 		public const string PROTOCOL			= "itch://";
 		public const string LAUNCH				= PROTOCOL + "library";
 		public const string INSTALL_GAME		= PROTOCOL + "games/";
+        private const string ITCH_RUN           = @"itch\shell\open\command"; // HKEY_CLASSES_ROOT
 		private const string ITCH_DB			= @"itch\db\butler.db"; // AppData\Roaming
 		/*
 		private const string ITCH_GAME_FOLDER	= "apps";
@@ -41,7 +42,7 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"itch\shell\open\command", RegistryKeyPermissionCheck.ReadSubTree);
+                using RegistryKey key = Registry.ClassesRoot.OpenSubKey(ITCH_RUN, RegistryKeyPermissionCheck.ReadSubTree);
                 string value = GetRegStrVal(key, null);
                 string[] subs = value.Split();
                 string command = "";
@@ -68,7 +69,7 @@ namespace GameLauncher_Console
 			{
 				try
 				{
-                    using RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"itch\shell\open\command", RegistryKeyPermissionCheck.ReadSubTree);
+                    using RegistryKey key = Registry.ClassesRoot.OpenSubKey(ITCH_RUN, RegistryKeyPermissionCheck.ReadSubTree);
                     string[] subs = GetRegStrVal(key, null).Split(' ');
                     string command = "";
                     string args = "";

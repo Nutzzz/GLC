@@ -35,7 +35,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey(IG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                    RegistryView.Registry64).OpenSubKey(IG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
                 Process igcProcess = new();
                 string launcherPath = Path.Combine(GetRegStrVal(key, GAME_INSTALL_LOCATION), "IGClient.exe");
                 if (File.Exists(launcherPath))

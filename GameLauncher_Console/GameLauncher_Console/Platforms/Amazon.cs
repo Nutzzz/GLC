@@ -131,12 +131,13 @@ namespace GameLauncher_Console
                     string strIconPath = "";
                     string strUninstall = "";
 
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(Path.Combine(NODE64_REG, "AmazonGames", strTitle), RegistryKeyPermissionCheck.ReadSubTree))
+                    using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                        RegistryView.Registry64).OpenSubKey(Path.Combine(UNINSTALL_REG, "AmazonGames", strTitle), RegistryKeyPermissionCheck.ReadSubTree)) // HKCU64
                     {
                         if (key != null)
                         {
-                            strIconPath = GetRegStrVal(key, "DisplayIcon");
-                            strUninstall = GetRegStrVal(key, "UninstallString");
+                            strIconPath = GetRegStrVal(key, GAME_DISPLAY_ICON);
+                            strUninstall = GetRegStrVal(key, GAME_UNINSTALL_STRING);
                         }
                     }
                     if (string.IsNullOrEmpty(strIconPath))

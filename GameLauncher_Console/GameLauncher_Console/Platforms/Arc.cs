@@ -17,7 +17,7 @@ namespace GameLauncher_Console
 	{
 		public const GamePlatform ENUM			= GamePlatform.Arc;
 		public const string PROTOCOL			= "arc://";
-		private const string ARC_REG			= @"SOFTWARE\WOW6432Node\Perfect World Entertainment"; // HKLM32
+		private const string ARC_REG			= @"SOFTWARE\Perfect World Entertainment"; // HKLM32
 		//private const string ARC_UNREG		= "{CED8E25B-122A-4E80-B612-7F99B93284B3}"; // HKLM32 Uninstall
 		private const string ARC_GAMES			= "Core";
 		private const string ARC_ID				= "APP_ABBR";
@@ -25,7 +25,7 @@ namespace GameLauncher_Console
 		private const string ARC_EXEPATH		= "CLIENT_PATH";
 		private const string ARC_INST			= "installed";
 		private const string ARC_LANGDEF		= "en";
-		//[strLaunch] CLIENT_PATH in e.g., HKLM\SOFTWARE\WOW6432Node\Perfect World Entertainment\14000en
+		//[strLaunch] CLIENT_PATH in e.g., HKLM32\SOFTWARE\Perfect World Entertainment\14000en
 		//[strId?] APP_ABBR
 		//[installed] installed
 
@@ -74,7 +74,8 @@ namespace GameLauncher_Console
 			/*
 			string launcherPath = "";
 
-			using (RegistryKey launcherKey = Registry.LocalMachine.OpenSubKey(Path.Combine(ARC_REG, "Arc"), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
+				RegistryView.Registry32).OpenSubKey(Path.Combine(ARC_REG, "Arc"), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (launcherKey == null)
 				{
@@ -85,7 +86,8 @@ namespace GameLauncher_Console
 			}
 			*/
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(Path.Combine(ARC_REG, ARC_GAMES), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+            using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(Path.Combine(ARC_REG, ARC_GAMES), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if(key == null)
                 {

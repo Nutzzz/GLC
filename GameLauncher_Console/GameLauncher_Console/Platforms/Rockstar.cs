@@ -19,7 +19,7 @@ namespace GameLauncher_Console
 		private const string ROCKSTAR_LAUNCHER	= "Rockstar Games Launcher";
 		private const string ROCKSTAR_SOCIAL	= "Rockstar Games Social Club";
 		private const string ROCKSTAR_FOLDER	= "InstallFolder";
-		private const string ROCKSTAR_REG		= @"SOFTWARE\WOW6432Node\Rockstar Games\Launcher"; // HKLM32
+		private const string ROCKSTAR_REG		= @"SOFTWARE\Rockstar Games\Launcher"; // HKLM32
 		private const string ROCKSTAR_UNINST	= "Launcher.exe";
 
 		private static readonly string _name = Enum.GetName(typeof(GamePlatform), ENUM);
@@ -65,7 +65,8 @@ namespace GameLauncher_Console
 			string strPlatform = GetPlatformString(ENUM);
 			string launcherPath = "";
 
-			using (RegistryKey launcherKey = Registry.LocalMachine.OpenSubKey(ROCKSTAR_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
+				RegistryView.Registry32).OpenSubKey(ROCKSTAR_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (launcherKey == null)
 				{
@@ -75,7 +76,8 @@ namespace GameLauncher_Console
 				launcherPath = Path.Combine(GetRegStrVal(launcherKey, ROCKSTAR_FOLDER), ROCKSTAR_UNINST);
 			}
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				keyList = FindGameKeys(key, launcherPath, GAME_UNINSTALL_STRING, new string[] { ROCKSTAR_LAUNCHER, ROCKSTAR_SOCIAL });
 
@@ -113,8 +115,36 @@ namespace GameLauncher_Console
 			CLogger.LogDebug("------------------------");
 		}
 
-		public static string GetIconUrl(CGame _) => throw new NotImplementedException();
+        public static string GetIconUrl(CGame game)
+        {
+            return GetIconUrl(GetGameID(game.ID), game.Title);
+        }
 
-		public static string GetGameID(string key) => key;
+        public static string GetIconUrl(string id, string title)
+        {
+            if (string.IsNullOrEmpty(title))
+                return "";
+
+			id = id.ToLower();
+			if (id.EndsWith("_pc"))
+				id = id[..id.LastIndexOf("_pc")];
+
+            if (id.Equals("gtaiii"))
+				id = "gta3";
+            else if (id.Equals("gta5"))
+				id = "gtav";
+			else if (id.Equals("lanoire"))
+				id = "lan";
+
+            if (id.Equals("gta3") || id.Equals("gtasa") || id.Equals("gtavc"))
+                id += "unreal";
+
+            //id should be (as of 2022/12/15) one of: "bully", "gta3unreal", "gtavcunreal", "gtasaunreal", "gtaiv", "gtav", "lan", "lanvr", "mp3", "rdr2"
+            string iconUrl = string.Format("https://s.rsg.sc/sc/images/react/games/boxart/{0}.jpg", id);
+
+            return iconUrl;
+        }
+
+        public static string GetGameID(string key) => key;
 	}
 }

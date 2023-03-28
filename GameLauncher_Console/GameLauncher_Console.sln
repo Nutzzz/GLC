@@ -3,7 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLauncher_Console", "GameLauncher_Console\GameLauncher_Console.csproj", "{4EBCEF5B-1A8A-42FB-81DB-446A14ED15D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameLauncher_Console", "GameLauncher_Console\GameLauncher_Console.csproj", "{4EBCEF5B-1A8A-42FB-81DB-446A14ED15D1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45} = {D149C871-27ED-4307-BE1F-E5FB55C2BB45}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{FBEDF6E1-33EC-4B48-B44F-0CC2CE8585BF}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -20,6 +23,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PureOrigin.API", "PureOrigin.API", "{EF2BF649-24D0-4307-9D49-4FA96259C214}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureOrigin.API", "..\PureOrigin.API\Src\PureOrigin.API\PureOrigin.API.csproj", "{D149C871-27ED-4307-BE1F-E5FB55C2BB45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureOrigin.API.Tests", "..\PureOrigin.API\Src\PureOrigin.API.Tests\PureOrigin.API.Tests.csproj", "{AFD1FA2C-F2BF-43D3-91FB-225BF1021543}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +48,21 @@ Global
 		{92A97D68-92B7-4348-9275-BC3E9D0E8941}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92A97D68-92B7-4348-9275-BC3E9D0E8941}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92A97D68-92B7-4348-9275-BC3E9D0E8941}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD1FA2C-F2BF-43D3-91FB-225BF1021543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD1FA2C-F2BF-43D3-91FB-225BF1021543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD1FA2C-F2BF-43D3-91FB-225BF1021543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD1FA2C-F2BF-43D3-91FB-225BF1021543}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D149C871-27ED-4307-BE1F-E5FB55C2BB45} = {EF2BF649-24D0-4307-9D49-4FA96259C214}
+		{AFD1FA2C-F2BF-43D3-91FB-225BF1021543} = {EF2BF649-24D0-4307-9D49-4FA96259C214}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90858D12-1823-4AAB-91A4-04758C95F911}

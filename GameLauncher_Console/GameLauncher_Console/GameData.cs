@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 
 namespace GameLauncher_Console
 {
@@ -76,8 +77,14 @@ namespace GameLauncher_Console
 			[Description("Legacy")]
 			Legacy = 26,
 			[Description("Riot Client")]
-			Riot = 27
-		}
+			Riot = 27,
+            [Description("Game Jolt Client")]
+            GameJolt = 28,
+            [Description("Humble App")]
+            Humble = 29,
+            [Description("Miscellaneous")]
+            Misc = 30
+        }
 
 		public enum Match
 		{
@@ -106,7 +113,7 @@ namespace GameLauncher_Console
 			public bool isAscending;
         }
 
-		public static List<string> articles = new()
+		public static readonly List<string> _articles = new()
 		{
 			"The ",								// English definite
 			"A ", "An "							// English indefinite
@@ -1195,6 +1202,7 @@ namespace GameLauncher_Console
 		/// <param name="gameSet">Set of games</param>
 		private static void SortGameSet(ref HashSet<CGame> gameSet, CConsoleHelper.SortMethod sortMethod, bool faveSort = true, bool instSort = true, bool ignoreArticle = false)
 		{
+			List<string> articles = _articles;
 			if (ignoreArticle)
 				articles = new List<string>() { };
 
@@ -1332,7 +1340,7 @@ namespace GameLauncher_Console
 			*/
 
 			// remove leading "the" or "a/an"
-			foreach (string art in articles)
+			foreach (string art in _articles)
 			{
 				if (alias.StartsWith(art + " "))
 					alias = alias[(art.Length + 1)..];
@@ -1346,12 +1354,36 @@ namespace GameLauncher_Console
 			return alias;
 		}
 
-		/// <summary>
-		/// Return set of games from a fuzzy match
-		/// </summary>
-		/// <returns>dictionary of titles with confidence levels</returns>
-		/// <param name="match">String to match</param>
-		public static Dictionary<string, int> FindMatchingTitles(string match)
+        /// <summary>
+        /// Remove Unicode characters from a string
+        /// </summary>
+        /// <param name="s">A string</param>
+        /// <returns>simplified string</returns>
+        public static string StripUnicode(string s)
+        {
+            StringBuilder sb = new(s.Length);
+            foreach (char c in s)
+            {
+                if (c >= 127)
+                    continue;
+                if (c < 32)
+                    continue;
+                if (c == '%')
+                    continue;
+                if (c == '?')
+                    continue;
+                sb.Append(c);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Return set of games from a fuzzy match
+        /// </summary>
+        /// <returns>dictionary of titles with confidence levels</returns>
+        /// <param name="match">String to match</param>
+        public static Dictionary<string, int> FindMatchingTitles(string match)
 		{
 			return FindMatchingTitles(match, 0);
 		}
@@ -1379,7 +1411,7 @@ namespace GameLauncher_Console
 						shortTitle = shortTitle.Substring(prep.Length + 1);
 				}
 				*/
-				foreach (string art in articles)
+				foreach (string art in _articles)
 				{
 					if (shortTitle.StartsWith(art + " "))
 						shortTitle = shortTitle[(art.Length + 1)..];
@@ -1466,7 +1498,7 @@ namespace GameLauncher_Console
 						shortTitle = shortTitle.Substring(prep.Length + 1);
 				}
 				*/
-				foreach (string art in articles)
+				foreach (string art in _articles)
 				{
 					if (shortTitle.StartsWith(art + " "))
 						shortTitle = shortTitle[(art.Length + 1)..];

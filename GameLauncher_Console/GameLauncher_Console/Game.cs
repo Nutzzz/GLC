@@ -1,5 +1,4 @@
-﻿using GameLauncher_Console;
-using SqlDB;
+﻿using SqlDB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,14 +15,14 @@ namespace CGame_Test // TODO: GameLauncher_Console
     public static class CGame
     {
         // AttributeName definitions
-        public static readonly string A_GAME_TAG = "TAG";
+        private static readonly string _a_game_tag = "TAG";
 
         /// <summary>
         /// Game title articles.
         /// Removed from titles when creating default aliases
         /// Ignored during title searches
         /// </summary>
-        public static readonly string[] ARTICLES =
+        private static readonly string[] _articles =
         {
             "The ",								// English definite
 			"A ", "An ",						// English indefinite
@@ -292,7 +291,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
                 {
                     if((flag & i) > 0)
                     {
-                        orderByString += CExtensions.GetDescription(i);
+                        orderByString += GameLauncher_Console.CExtensions.GetDescription(i);
                         if(!ascending)
                         {
                             orderByString += " DESC, ";

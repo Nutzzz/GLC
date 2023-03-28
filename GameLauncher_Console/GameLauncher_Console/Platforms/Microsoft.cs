@@ -131,7 +131,7 @@ namespace GameLauncher_Console
                                 string protocol = "";
                                 try
                                 {
-                                    strTitle = appClass.GetValue("DisplayName").ToString();
+                                    strTitle = appClass.GetValue(GAME_DISPLAY_NAME).ToString();
                                     strAlias = GetAlias(appClass.GetValue("Description").ToString());
                                     protocol = key2.GetValue("Name").ToString();
                                 }
@@ -171,12 +171,14 @@ namespace GameLauncher_Console
 
 				if (!found)
 				{
-                    using RegistryKey key = Registry.ClassesRoot.OpenSubKey(Path.Combine(@"Extensions\ContractId\Windows.Launch\PackageId", strID, "ActivatableClassId", "App"), RegistryKeyPermissionCheck.ReadSubTree);
+                    using RegistryKey key = Registry.ClassesRoot.OpenSubKey(
+						Path.Combine(@"Extensions\ContractId\Windows.Launch\PackageId", strID, "ActivatableClassId", "App"), 
+						RegistryKeyPermissionCheck.ReadSubTree);
                     if (key != null)
                     {
                         try
                         {
-                            strTitle = key.GetValue("DisplayName").ToString();
+                            strTitle = key.GetValue(GAME_DISPLAY_NAME).ToString();
                             strAlias = GetAlias(key.GetValue("Description").ToString());
                             // strLaunch will be found using AppxManifest.xml below
                         }
@@ -187,7 +189,8 @@ namespace GameLauncher_Console
                     }
                 }
 
-				using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(Path.Combine(@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages", strID)))
+				using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(
+					Path.Combine(@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages", strID)))
 				{
 					if (key != null)
 					{
@@ -196,7 +199,7 @@ namespace GameLauncher_Console
 							string basePath = key.GetValue("PackageRootFolder").ToString();
 							if (strTitle.StartsWith("@"))
 							{
-								strTitle = key.GetValue("DisplayName").ToString();
+								strTitle = key.GetValue(GAME_DISPLAY_NAME).ToString();
 								if (!found)
 								{
 #if DEBUG

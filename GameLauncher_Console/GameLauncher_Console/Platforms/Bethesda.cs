@@ -21,7 +21,7 @@ namespace GameLauncher_Console
 		private const string BETHESDA_PATH			= "Path";
 		private const string BETHESDA_CREATION_KIT	= "Creation Kit";
 		private const string BETHESDA_PRODUCT_ID	= "ProductID";
-		//private const string BETHESDA_REG			= @"SOFTWARE\WOW6432Node\Bethesda Softworks\Bethesda.net"; // HKLM32
+		//private const string BETHESDA_REG			= @"SOFTWARE\Bethesda Softworks\Bethesda.net"; // HKLM32
 		private const string BETHESDA_UNREG			= "{3448917E-E4FE-4E30-9502-9FD52EABB6F5}_is1"; // HKLM32 Uninstall
 		private const string BETHESDA_UNINST		= "BethesdaNetUpdater.exe";
 
@@ -82,7 +82,8 @@ namespace GameLauncher_Console
 			/*
 			string launcherPath = "";
 
-			using (RegistryKey launcherKey = Registry.LocalMachine.OpenSubKey(Path.Combine(NODE32_REG, BETHESDA_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
+				RegistryView.Registry32).OpenSubKey(Path.Combine(UNINSTALL_REG, BETHESDA_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				if (launcherKey == null)
 				{
@@ -93,7 +94,8 @@ namespace GameLauncher_Console
 			}
 			*/
 
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(NODE32_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
+            using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                RegistryView.Registry32).OpenSubKey(UNINSTALL_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
 				keyList = FindGameKeys(key, BETHESDA_UNINST, GAME_UNINSTALL_STRING, new string[] { BETHESDA_CREATION_KIT, BETHESDA_UNREG });
 
