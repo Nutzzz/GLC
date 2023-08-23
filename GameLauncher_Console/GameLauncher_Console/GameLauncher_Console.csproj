@@ -1,17 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>false</SelfContained>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <!--<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>-->
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-    <PublishTrimmed>false</PublishTrimmed>
-    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-    <PublishReadyToRun>false</PublishReadyToRun>
-    <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
-    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
-    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
     <AssemblyName>glc</AssemblyName>
@@ -52,22 +41,12 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SignAssembly>false</SignAssembly>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
-    <VersionPrefix>1.2.0</VersionPrefix>
-    <BaseOutputPath>bin\</BaseOutputPath>
-    <PackageProjectUrl>https://github.com/Solaire/GLC</PackageProjectUrl>
+    <Title>GLC</Title>
     <PackageIcon>gamehub.png</PackageIcon>
+    <Copyright>(c) 2023 GLC contributors</Copyright>
+    <PackageProjectUrl></PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Solaire/GLC</RepositoryUrl>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>$(Version)</Version>
-    <Copyright>Copyright © 2022 GLC contributors</Copyright>
-    <Description>Video game registry key scanner and launcher</Description>
-    <Title>GLC (GameLauncher Console)</Title>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">
@@ -165,15 +144,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\gamehub.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\neo_glc\gamehub.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
