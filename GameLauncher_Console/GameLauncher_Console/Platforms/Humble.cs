@@ -113,7 +113,8 @@ namespace GameLauncher_Console
 					*/
 					document.RootElement.TryGetProperty("user", out JsonElement user);
 					bool bHasHgc = GetBoolProperty(user, "owns_active_content");
-                    //bool paused = GetBoolProperty(user, "is_paused"); // TODO: find out whether we need to check this too
+                    bool bIsPaused = GetBoolProperty(user, "is_paused");
+					//bool bPerks = GetBoolProperty(user, "has_perks");  // TODO: find out whether we need to check this too
 
                     document.RootElement.TryGetProperty("game-collection-4", out JsonElement games);
 					foreach (JsonElement game in games.EnumerateArray())
@@ -144,11 +145,12 @@ namespace GameLauncher_Console
                         //   "" [blank] for non-Steam bundle purchases
 						if (GetStringProperty(game, "machineName").EndsWith("_collection"))
 							bIsHgc = true;
-						if (GetStringProperty(game, "status").Equals("downloaded")) // "available" or "downloaded"
+						string status = GetStringProperty(game, "status"); // "available" or "downloaded" or "installed"
+						if (status.Equals("downloaded") || status.Equals("installed"))
 						{
 							bInstalled = true;
                             // If Humble Choice subscription is inactive, count game as not-installed
-                            if (bIsHgc && !bHasHgc)
+                            if (bIsHgc && (!bHasHgc || bIsPaused))
                                 bInstalled = false;
                         }
                         strTitle = GetStringProperty(game, "gameName");
@@ -251,6 +253,8 @@ namespace GameLauncher_Console
 					*/
                     document.RootElement.TryGetProperty("user", out JsonElement user);
                     bool getChoice = GetBoolProperty(user, "owns_active_content");
+					bool isPaused = GetBoolProperty(user, "is_paused");
+					//bool hasPerks = GetBoolProperty(user, "has_perks");
 
                     document.RootElement.TryGetProperty("game-collection-4", out JsonElement games);
                     foreach (JsonElement game in games.EnumerateArray())

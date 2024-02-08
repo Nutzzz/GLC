@@ -400,7 +400,7 @@ namespace GameLauncher_Console
 			{
                 using JsonDocument document = JsonDocument.Parse(@strDocumentData, jsonTrailingCommas);
                 if (Version.TryParse(GetStringProperty(document.RootElement, JSON_VERSION), out version) && version < _min_game_version)
-					return true;
+					return false;
 
                 if (!document.RootElement.TryGetProperty(GAMES_ARRAY, out JsonElement jArrGames)) // 'games' array does not exist
                     return false;
