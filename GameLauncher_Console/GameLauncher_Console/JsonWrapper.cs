@@ -1015,6 +1015,7 @@ namespace GameLauncher_Console
 			SetDefaultVal(CConfig.CFG_USEEGL, force);
 			SetDefaultVal(CConfig.CFG_USEGAL, force);
 			SetDefaultVal(CConfig.CFG_USEHUM, force);
+			SetDefaultVal(CConfig.CFG_USEITC, force);
 			SetDefaultVal(CConfig.CFG_USELEG, force);
 		}
 

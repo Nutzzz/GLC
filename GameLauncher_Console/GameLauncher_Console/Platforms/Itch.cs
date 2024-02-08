@@ -20,7 +20,9 @@ namespace GameLauncher_Console
 		public const GamePlatform ENUM			= GamePlatform.Itch;
 		public const string PROTOCOL			= "itch://";
 		public const string LAUNCH				= PROTOCOL + "library";
-		public const string INSTALL_GAME		= PROTOCOL + "games/";
+		public const string START_GAME			= PROTOCOL + "caves/";	// itch://caves/<caveid>/launch
+		public const string START_GAME_SUFFIX	= "/launch";
+		public const string INSTALL_GAME		= PROTOCOL + "games/";  // itch://games/<gameid>
         private const string ITCH_RUN           = @"itch\shell\open\command"; // HKEY_CLASSES_ROOT
 		private const string ITCH_DB			= @"itch\db\butler.db"; // AppData\Roaming
 		/*
@@ -129,6 +131,7 @@ namespace GameLauncher_Console
                             int id = rdr.GetInt32(0);
                             string strID = $"itch_{id}";
                             string strTitle = rdr.GetString(1);
+                            string caveId = "";
                             //TODO: metadata description
                             //string strDescription = rdr.GetString(2)
                             string strAlias = "";
@@ -141,17 +144,19 @@ namespace GameLauncher_Console
 
                             // SELECT path FROM install_locations;
                             // SELECT install_folder FROM downloads;
-                            using (SQLiteCommand cmd2 = new($"SELECT installed_at, last_touched_at, verdict, install_folder_name FROM caves WHERE game_id = {id};", con))
+                            using (SQLiteCommand cmd2 = new($"SELECT id, installed_at, last_touched_at, verdict, install_folder_name FROM caves WHERE game_id = {id};", con))
                             using (SQLiteDataReader rdr2 = cmd2.ExecuteReader())
                             {
                                 while (rdr2.Read())
                                 {
-                                    if (!rdr2.IsDBNull(1))
+                                    if (!rdr2.IsDBNull(0))
+                                        caveId = rdr2.GetString(0);
+                                    if (!rdr2.IsDBNull(2))
+                                        lastRun = rdr2.GetDateTime(2);
+                                    else if (!rdr2.IsDBNull(1))
                                         lastRun = rdr2.GetDateTime(1);
-                                    else if (!rdr2.IsDBNull(0))
-                                        lastRun = rdr2.GetDateTime(0);
-                                    string verdict = rdr2.GetString(2);
-                                    //strAlias = rdr2.GetString(3);
+                                    string verdict = rdr2.GetString(3);
+                                    //strAlias = rdr2.GetString(4);
                                     strAlias = GetAlias(strTitle);
                                     if (strAlias.Equals(strTitle, CDock.IGNORE_CASE))
                                         strAlias = "";
@@ -162,7 +167,15 @@ namespace GameLauncher_Console
                                     {
                                         foreach (JsonElement jElement in candidates.EnumerateArray())
                                         {
-                                            strLaunch = string.Format("{0}\\{1}", basePath, GetStringProperty(jElement, "path"));
+                                        	if ((bool)CConfig.GetConfigBool(CConfig.CFG_USEITC))
+                                        	{
+	                                            if (!string.IsNullOrEmpty(caveId))
+	                                                strLaunch = PROTOCOL + START_GAME + caveId + START_GAME_SUFFIX;
+	                                            else
+	                                                strLaunch = PROTOCOL + LAUNCH + id;
+                                        	}
+                                        	else
+                                            	strLaunch = string.Format("{0}\\{1}", basePath, GetStringProperty(jElement, "path"));
                                         }
                                     }
                                     // Add installed games
