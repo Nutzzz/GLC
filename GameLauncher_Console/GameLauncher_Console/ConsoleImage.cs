@@ -320,7 +320,7 @@ namespace GameLauncher_Console
         public static void ShowImage(int selection, string title, string imgPath, bool bPlatform, Size size, Point location, ConsoleColor? bg)
         {
 			if (bPlatform)
-				title = title.Substring(0, title.LastIndexOf(':'));
+				title = title[..title.LastIndexOf(':')];
 
 			string titleFile = string.Concat(title.Split(Path.GetInvalidFileNameChars()));
 

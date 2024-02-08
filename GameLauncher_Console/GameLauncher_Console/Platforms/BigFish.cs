@@ -285,7 +285,7 @@ namespace GameLauncher_Console
 			int index = 0;
 			if (key.StartsWith("bfg_"))
 				index = 5;
-			if (int.TryParse(key.Substring(index, key.IndexOf('T') - 1), out int num) && num > 0)
+			if (int.TryParse(key.AsSpan(index, key.IndexOf('T') - 1), out int num) && num > 0)
 				return num.ToString();
 			else
 				return key;

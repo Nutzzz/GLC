@@ -1060,7 +1060,7 @@ namespace GameLauncher_Console
 				}
 				else
 				{
-					selection = selection.Substring(0, selection.IndexOf(": "));
+					selection = selection[..selection.IndexOf(": ")];
 					leftSide = string.Format("{0} {1} {0}", CDock.SEPARATOR_SYMBOL, selection);
 				}
 				Console.WriteLine(leftSide + rightSide.PadLeft(Console.WindowWidth - leftSide.Length - 1));
@@ -1129,7 +1129,7 @@ namespace GameLauncher_Console
 					else
 						CDock.SetFgColour(cols.entryCC, cols.entryLtCC);
 				}
-				Console.WriteLine(itemList[i].Substring(0, Math.Min(itemList[i].Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)));
+				Console.WriteLine(itemList[i][..Math.Min(itemList[i].Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)]);
 				CDock.SetBgColour(cols.bgCC, cols.bgLtCC);
 				CDock.SetFgColour(cols.entryCC, cols.entryLtCC);
 			}
@@ -1351,7 +1351,7 @@ namespace GameLauncher_Console
 			if (m_MenuType == MenuType.cType_List)
 				Console.Write(strCurrentOption);
 			else if (m_ConsoleState == ConsoleState.cState_Navigate)  // if (m_MenuType == MenuType.cType_Grid &&
-				Console.Write(strCurrentOption.Substring(0, Math.Min(strCurrentOption.Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)));
+				Console.Write(strCurrentOption[..Math.Min(strCurrentOption.Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)]);
 			if (!(bool)CConfig.GetConfigBool(CConfig.CFG_NOPAGE) && !(m_MenuType == MenuType.cType_List && (ushort)CConfig.GetConfigNum(CConfig.CFG_ICONSIZE) > 0))
 				DrawInfoBar(strCurrentOption, cols);
 
@@ -1393,7 +1393,7 @@ namespace GameLauncher_Console
 					}
 				}
 				else
-					Console.Write(strPreviousOption.Substring(0, Math.Min(strPreviousOption.Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)));
+					Console.Write(strPreviousOption[..Math.Min(strPreviousOption.Length, m_nSpacingPerLine - CDock.COLUMN_CUSHION)]);
 			}
 			catch (Exception e)
 			{

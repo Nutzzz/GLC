@@ -60,13 +60,15 @@ namespace GameLauncher_Console
 						continue;
 					if (file.ToLower().Contains("unins"))
 						continue;
+					if (file.ToLower().Contains("setup"))
+						continue;
 
 
 					string description = FileVersionInfo.GetVersionInfo(file).FileDescription ?? "";
 					description = description.ToLower();
 
 					FileInfo info = new(file);
-					string name = info.Name.Substring(0, info.Name.IndexOf('.')).ToLower();
+					string name = info.Name[..info.Name.IndexOf('.')].ToLower();
 
 					// Perform a check against the acronym
 					if (letters.Length > 2)
@@ -130,7 +132,7 @@ namespace GameLauncher_Console
 					description = description.ToLower();
 
 					FileInfo info = new(file);
-					string name = info.Name.Substring(0, info.Name.IndexOf('.')).ToLower();
+					string name = info.Name[..info.Name.IndexOf('.')].ToLower();
 
 					// Perform a check against the acronym
 					if (letters.Length > 2)

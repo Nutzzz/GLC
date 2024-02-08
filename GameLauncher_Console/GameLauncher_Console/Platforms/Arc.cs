@@ -114,12 +114,12 @@ namespace GameLauncher_Console
 						id = Path.GetFileName(data.Name);
 						int idIndex = id.IndexOf(ARC_LANGDEF);
 						if (idIndex > -1)
-							id = id.Substring(0, idIndex);
+							id = id[..idIndex];
 					}
 					string name = Path.GetFileName(GetRegStrVal(data, ARC_PATH).Trim(new char[] { '"', '\\', '/' }));
 					int nameIndex = name.IndexOf("_" + ARC_LANGDEF);
 					if (nameIndex > -1)
-						name = name.Substring(0, nameIndex);
+						name = name[..nameIndex];
 					string strID = "";
 					string strTitle = "";
 					string strLaunch = "";
