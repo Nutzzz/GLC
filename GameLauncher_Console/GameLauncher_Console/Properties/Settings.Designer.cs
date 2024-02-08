@@ -383,6 +383,16 @@ namespace GameLauncher_Console.Properties {
             }
         }
         
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool flag_use_itch_launcher {
+            get {
+                return ((bool)(this["flag_use_itch_launcher"]));
+            }
+            set {
+                this["flag_use_itch_launcher"] = value;
+            }
+        }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
