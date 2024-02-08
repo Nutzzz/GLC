@@ -2556,7 +2556,7 @@ namespace GameLauncher_Console
 						envKey = Registry.CurrentUser.OpenSubKey("Environment", true);
 						string profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 						if (inPath.Length > profile.Length &&
-							inPath.Substring(0, profile.Length).Equals(profile))
+							inPath[..profile.Length].Equals(profile))
 						{
 							inPath = "%USERPROFILE%" + inPath[profile.Length..];
 						}

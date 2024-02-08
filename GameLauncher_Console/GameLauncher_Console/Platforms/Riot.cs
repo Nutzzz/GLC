@@ -103,9 +103,9 @@ namespace GameLauncher_Console
 								foreach (string line in File.ReadLines(settingsFile))
 								{
 									if (line.StartsWith("product_install_full_path"))
-										path = line.Substring(line.IndexOf('"')).Trim().Trim('"');
+										path = line[line.IndexOf('"')..].Trim().Trim('"');
 									else if (line.StartsWith("shortcut_name"))
-										strTitle = Path.GetFileNameWithoutExtension(line.Substring(line.IndexOf('"')).Trim().Trim('"'));
+										strTitle = Path.GetFileNameWithoutExtension(line[line.IndexOf('"')..].Trim().Trim('"'));
 								}
 								break;
 							}

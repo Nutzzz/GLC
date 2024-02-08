@@ -85,7 +85,7 @@ namespace GameLauncher_Console
             {
                 //CLogger.LogInfo("Setting up a {0} game...", GOG.NAME_LONG);
                 ProcessStartInfo gogProcess = new();
-                string gogClientPath = game.Launch.Contains(".") ? game.Launch.Substring(0, game.Launch.IndexOf('.') + 4) : game.Launch;
+                string gogClientPath = game.Launch.Contains(".") ? game.Launch[..(game.Launch.IndexOf('.') + 4)] : game.Launch;
                 string gogArguments = game.Launch.Contains(".") ? game.Launch[(game.Launch.IndexOf('.') + 4)..] : string.Empty;
                 CLogger.LogInfo($"Launch: \"{gogClientPath}\" {gogArguments}");
                 gogProcess.FileName = gogClientPath;

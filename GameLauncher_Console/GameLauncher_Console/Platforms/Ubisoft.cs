@@ -212,7 +212,7 @@ namespace GameLauncher_Console
 									strID = "uplay_" + line[(line.IndexOf("game_code:") + 11)..].Trim();
 								else if (line.Trim().StartsWith(@"register: HKEY_LOCAL_MACHINE\SOFTWARE\Ubisoft\Launcher\Installs\"))
 								{
-									strID = line.Substring(0, line.LastIndexOf("\\")).Trim();
+									strID = line[..line.LastIndexOf("\\")].Trim();
 									strID = UPLAY_PREFIX + strID[(strID.LastIndexOf("\\") + 1)..];
 								}
 							}

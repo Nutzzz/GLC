@@ -1408,7 +1408,7 @@ namespace GameLauncher_Console
 				foreach (string prep in new List<string> { "for", "of", "to" })
 				{
 					if (shortTitle.StartsWith(prep + " "))
-						shortTitle = shortTitle.Substring(prep.Length + 1);
+						shortTitle = shortTitle[(prep.Length + 1)..];
 				}
 				*/
 				foreach (string art in _articles)

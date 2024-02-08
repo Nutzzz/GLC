@@ -78,7 +78,7 @@ namespace GameLauncher_Console
 				launcherPath = GetRegStrVal(launcherKey, GAME_DISPLAY_ICON);
 				int pathIndex = launcherPath.IndexOf(",");
 				if (pathIndex > -1)
-					launcherPath = launcherPath.Substring(0, pathIndex);
+					launcherPath = launcherPath[..pathIndex];
 			}
 			*/
 			string dataPath = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), WARGAMING_DATA);
@@ -133,7 +133,7 @@ namespace GameLauncher_Console
 						strIconPath = GetRegStrVal(data, GAME_DISPLAY_ICON);
 						int iconIndex = strIconPath.IndexOf(',');
 						if (iconIndex > -1)
-							strIconPath = strIconPath.Substring(0, iconIndex);
+							strIconPath = strIconPath[..iconIndex];
 						strUninstall = GetRegStrVal(data, GAME_UNINSTALL_STRING);
 						strAlias = GetAlias(Path.GetFileNameWithoutExtension(strLaunch.Trim(new char[] { ' ', '\'', '"' })));
 						if (strAlias.Length > strTitle.Length)
