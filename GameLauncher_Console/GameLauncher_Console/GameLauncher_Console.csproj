@@ -132,6 +132,29 @@
     <ProjectReference Include="..\..\PureOrigin.API\Src\PureOrigin.API\PureOrigin.API.csproj" />	
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder\GameFinder.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.RegistryUtils\GameFinder.RegistryUtils.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.EmuHandlers.Dolphin\GameCollector.EmuHandlers.Dolphin.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.EmuHandlers.MAME\GameCollector.EmuHandlers.MAME.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Amazon\GameCollector.StoreHandlers.Amazon.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Arc\GameCollector.StoreHandlers.Arc.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.StoreHandlers.EADesktop\GameFinder.StoreHandlers.EADesktop.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.StoreHandlers.EGS.\GameFinder.StoreHandlers.EGS.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.StoreHandlers.GOG\GameFinder.StoreHandlers.GOG.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.IGClient\GameCollector.StoreHandlers.IGClient.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Itch\GameCollector.StoreHandlers.Itch.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Legacy\GameCollector.StoreHandlers.Legacy.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Oculus\GameCollector.StoreHandlers.Oculus.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Paradox\GameCollector.StoreHandlers.Paradox.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Plarium\GameCollector.StoreHandlers.Plarium.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.RobotCache\GameCollector.StoreHandlers.RobotCache.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Rockstar\GameCollector.StoreHandlers.Rockstar.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.StoreHandlers.Steam\GameFinder.StoreHandlers.Steam.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameCollector.StoreHandlers.Ubisoft\GameCollector.StoreHandlers.Ubisoft.csproj" />
+    <ProjectReference Include="..\..\..\GameCollector\src\GameFinder.StoreHandlers.Xbox\GameFinder.StoreHandlers.Xbox.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
     <PackageReference Include="GameCollector" Version="4.2.0.2" />
     <PackageReference Include="GameCollector.EmuHandlers.Dolphin" Version="4.2.0.2" />
     <PackageReference Include="GameCollector.EmuHandlers.MAME" Version="4.2.0.2" />
@@ -151,6 +174,7 @@
     <PackageReference Include="GameCollector.StoreHandlers.Steam" Version="4.2.0.2" />
     <PackageReference Include="GameCollector.StoreHandlers.Ubisoft" Version="4.2.0.2" />
     <PackageReference Include="GameCollector.StoreHandlers.Xbox" Version="4.2.0.2" />
+    -->
     <PackageReference Include="protobuf-net" Version="3.2.30" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.30" />
     <PackageReference Include="PureOrigin.API" Version="1.0.3" />
