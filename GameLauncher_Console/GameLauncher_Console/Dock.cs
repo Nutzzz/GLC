@@ -75,9 +75,9 @@ namespace GameLauncher_Console
 		{
 		//  0|-------|---------|---------|---------|---------|---------|---------|---------|80
 			" This program will scan your system for installed video games and display",
-			" them as a list. The following platforms are supported:",
-			" *Amazon *BattleNet *BigFish *EA *Epic *GameJolt *GOG *Humble *Indiegala *itch",
-			" *Legacy *Oculus *Paradox *Plarium *Riot *Rockstar *Steam *Ubisoft *Wargaming",
+			" them as a list. The following platforms are supported: *Amazon *BattleNet",
+			" *BigFish *EA *Epic *GameJolt *GOG *Humble *Indiegala *itch *Legacy *Oculus",
+			" *Paradox *Plarium *Riot *RobotCache *Rockstar *Steam *Ubisoft *Wargaming",
 			"",
 			" The games list and configuration are stored in .json files in the same folder",
 			" as this program. You can manually add games by placing a shortcut (.lnk) in",
@@ -97,8 +97,8 @@ namespace GameLauncher_Console
 		public void MainLoop(string[] args)
 		{
 			CPlatform platforms = new();
-			platforms.AddSupportedPlatform(new PlatformAmazon());
-			platforms.AddSupportedPlatform(new PlatformArc());
+            platforms.AddSupportedPlatform(new PlatformAmazon());
+            platforms.AddSupportedPlatform(new PlatformArc());
 			platforms.AddSupportedPlatform(new PlatformBattlenet());
 			//platforms.AddSupportedPlatform(new PlatformBethesda());	// deprecated May 2022
 			platforms.AddSupportedPlatform(new PlatformBigFish());
@@ -111,17 +111,18 @@ namespace GameLauncher_Console
             platforms.AddSupportedPlatform(new PlatformIGClient());
 			platforms.AddSupportedPlatform(new PlatformItch());
 			platforms.AddSupportedPlatform(new PlatformLegacy());
+			platforms.AddSupportedPlatform(new PlatformMicrosoft());
             platforms.AddSupportedPlatform(new PlatformOculus());
 			platforms.AddSupportedPlatform(new PlatformParadox());
 			platforms.AddSupportedPlatform(new PlatformPlarium());
 			platforms.AddSupportedPlatform(new PlatformRiot());
+			platforms.AddSupportedPlatform(new PlatformRobotCache());
 			platforms.AddSupportedPlatform(new PlatformRockstar());
 			platforms.AddSupportedPlatform(new PlatformSteam());
 			platforms.AddSupportedPlatform(new PlatformUbisoft());
 			platforms.AddSupportedPlatform(new PlatformWargaming());
 #if DEBUG
-			platforms.AddSupportedPlatform(new PlatformMicrosoft());	// an experiment for now
-			//platforms.AddSupportedPlatform(new PlatformMisc());			// another experiment
+			//platforms.AddSupportedPlatform(new PlatformMisc());			// an experiment
 #endif
 			bool import, parseError = false;
 			import = CJsonWrapper.ImportFromINI(out CConfig.ConfigVolatile cfgv, out CConfig.Hotkeys keys, out CConfig.Colours cols);
@@ -950,6 +951,9 @@ namespace GameLauncher_Console
                                 case GamePlatform.Humble:			// avif (AV1) won't be supported until we finish switch to a cross-platform graphics library
                                     //DownloadCustomImage(selectedGame.Title, PlatformHumble.GetIconUrl(selectedGame), true);
                                     break;
+                                case GamePlatform.RobotCache:
+                                    //DownloadCustomImage(selectedGame.Title, PlatformRobotCache.GetIconUrl(selectedGame), true);
+                                    break;
                                 default:
 									break;
 							}
@@ -1042,6 +1046,9 @@ namespace GameLauncher_Console
                                     break;
                                 case GamePlatform.Humble:
                                     PlatformHumble.Launch();
+                                    break;
+                                case GamePlatform.RobotCache:
+                                    PlatformRobotCache.Launch();
                                     break;
                                 default:
 									break;
@@ -1419,6 +1426,10 @@ namespace GameLauncher_Console
 						//if (InputInstall(game.Title, cols))
 							return (PlatformHumble.InstallGame(game) != 0);		// [Doesn't currently show not-installed games]
 						//return false;
+					case GamePlatform.RobotCache:
+						if (InputInstall(game.Title, cols))
+							return (PlatformRobotCache.InstallGame(game) != 0);	// [Doesn't currently show not-installed games???]
+						return false;
 					default:
 						//SetFgColour(cols.errorCC, cols.errorLtCC);
 						CLogger.LogWarn("Install not supported for this platform.");
@@ -1573,6 +1584,9 @@ namespace GameLauncher_Console
                         break;
                     case GamePlatform.Humble:
                         PlatformHumble.StartGame(game);
+                        break;
+                    case GamePlatform.RobotCache:
+                        PlatformRobotCache.StartGame(game);
                         break;
                     default:
 						CLogger.LogInfo($"Launch: {game.Launch}");

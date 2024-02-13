@@ -1,5 +1,8 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameFinder.RegistryUtils;
+using GameFinder.StoreHandlers.EADesktop;
+using GameFinder.StoreHandlers.EADesktop.Crypto;
+using GameFinder.StoreHandlers.EADesktop.Crypto.Windows;
+using Logger;
 using PureOrigin.API;
 using SHA3.Net;
 using System;
@@ -17,13 +20,10 @@ using System.Runtime.Versioning;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -111,9 +111,23 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			bool dbGameFound = false;
-			List<string[]> ownedGames = new();
             string strPlatform = GetPlatformString(ENUM);
+
+            EADesktopHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared, new HardwareInfoProvider());
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            bool dbGameFound = false;
+			List<string[]> ownedGames = new();
 
             // Get all owned games via API
 
@@ -406,6 +420,7 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
 
 			CLogger.LogDebug("----------------------");
 		}

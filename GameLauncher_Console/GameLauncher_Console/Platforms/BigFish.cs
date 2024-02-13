@@ -1,15 +1,16 @@
-﻿using HtmlAgilityPack;
+﻿using GameCollector.StoreHandlers.BigFish;
+using GameFinder.RegistryUtils;
+using HtmlAgilityPack;
 using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Runtime.Versioning;
-using System.Xml;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CRegScanner;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -38,8 +39,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-				using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-					RegistryView.Registry32).OpenSubKey(BIGFISH_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
+				using RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine,
+                    Microsoft.Win32.RegistryView.Registry32).OpenSubKey(BIGFISH_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
 				string launcherPath = Path.Combine(GetRegStrVal(key, "InstallationPath"), "bfgclient.exe");
 				if (File.Exists(launcherPath))
 					Process.Start(launcherPath);
@@ -76,8 +77,22 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			List<RegistryKey> keyList;
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
+
+            BigFishHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            List<RegistryKey> keyList;
 
 			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
                 RegistryView.Registry32).OpenSubKey(BIGFISH_GAMES, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
@@ -218,6 +233,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 

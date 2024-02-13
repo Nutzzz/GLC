@@ -39,7 +39,7 @@ namespace GameLauncher_Console
 	{
 		private readonly List<IPlatform> _platforms;
 
-		/*
+        /*
 		/// <summary>
 		/// Enumerator containing currently supported game platforms
 		/// [Unlike CGameData.GamePlatform, this does not include Custom, All, Hidden, Search, New, NotInstalled categories]
@@ -91,21 +91,23 @@ namespace GameLauncher_Console
 			[Description("Riot Client")]
 			Riot = 20,
 			[Description("Game Jolt Client")]
-			Misc = 21,
+			GameJolt = 21,
 			[Description("Humble App")]
-			Misc = 22,
-			[Description("Miscellaneous")]
-			Misc = 23
+			Humble = 22,
+			[Description("RobotCache")]
+			RobotCache = 23,
+			//[Description("Miscellaneous")]
+			//Misc = 24,
 		}
 		*/
 
-		#region Query definitions
+        #region Query definitions
 
-		/// <summary>
-		/// Retrieve the platform information from the database
-		/// Also returns the game count for each platform
-		/// </summary>
-		public class CQryReadPlatforms : CSqlQry
+        /// <summary>
+        /// Retrieve the platform information from the database
+        /// Also returns the game count for each platform
+        /// </summary>
+        public class CQryReadPlatforms : CSqlQry
         {
 			public CQryReadPlatforms()
 				: base(
@@ -227,9 +229,18 @@ namespace GameLauncher_Console
 					CLogger.LogInfo("Looking for {0} games...", platform.Description);
 					platform.GetGames(gameDataList, bExpensiveIcons);
 				}
-				foreach (ImportGameData data in gameDataList)
+				foreach (var data in gameDataList)
 				{
-					tempGameSet.InsertGame(data.m_strID, data.m_strTitle, data.m_strLaunch, data.m_strIcon, data.m_strUninstall, data.m_bInstalled, false, true, false, data.m_strAlias, data.m_strPlatform, new List<string>(), DateTime.MinValue, 0, 0, 0f);
+					tempGameSet.InsertGame(data.m_gameData.GameId,
+						data.m_gameData.GameName,
+                        data.m_gameData.Launch == default ? data.m_gameData.LaunchUrl : (string.IsNullOrEmpty(data.m_gameData.LaunchArgs) ? data.m_gameData.Launch.GetFullPath() : data.m_gameData.Launch.GetFullPath() + " " + data.m_gameData.LaunchArgs),
+						data.m_gameData.Icon == default ? "" : data.m_gameData.Icon.GetFullPath(),
+						data.m_gameData.Uninstall == default ? data.m_gameData.UninstallUrl : (string.IsNullOrEmpty(data.m_gameData.UninstallArgs) ? data.m_gameData.Uninstall.GetFullPath() : data.m_gameData.Uninstall.GetFullPath() + " " + data.m_gameData.UninstallArgs),
+						data.m_gameData.IsInstalled,
+						false, true, false,
+						GetAlias(data.m_gameData.GameName),
+						data.m_strPlatform,
+						new List<string>(), DateTime.MinValue, 0, 0, 0f);
 				}
 			}
 

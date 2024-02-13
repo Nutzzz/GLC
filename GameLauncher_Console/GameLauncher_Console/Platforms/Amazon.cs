@@ -1,16 +1,15 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameCollector.StoreHandlers.Amazon;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Versioning;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -102,8 +101,25 @@ namespace GameLauncher_Console
         [SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
         {
-			List<string> azIds = new();
             string strPlatform = GetPlatformString(ENUM);
+            
+            var realFileSystem = FileSystem.Shared;
+            var windowsRegistry = WindowsRegistry.Shared;
+            
+            AmazonHandler handler = new(windowsRegistry, realFileSystem);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
+			List<string> azIds = new();
 
             // Get installed games
             string db = Path.Combine(GetFolderPath(SpecialFolder.LocalApplicationData), AMAZON_DB);
@@ -234,6 +250,7 @@ namespace GameLauncher_Console
                                 CLogger.LogDebug($"- *{strTitle}");
 
                                 // TODO: metadata
+            */
                                 /*
                                 string strDescription = rdr.GetString(0);
                                 string strPublisher = rdr.GetString(3);
@@ -264,7 +281,7 @@ namespace GameLauncher_Console
                                 }
                                 DateTime releaseDate = rdr.GetDateTime(10);
                                 */
-
+            /*
                                 gameDataList.Add(new ImportGameData(strID, strTitle, "", "", "", "", false, strPlatform));
 
                                 // Use ProductIconUrl to download not-installed icons
@@ -284,6 +301,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+            */
+
 			CLogger.LogDebug("-------------------");
 		}
 

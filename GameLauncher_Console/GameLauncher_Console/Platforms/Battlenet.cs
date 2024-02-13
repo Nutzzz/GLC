@@ -1,16 +1,13 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.BattleNet;
+using GameFinder.RegistryUtils;
+using Logger;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.Versioning;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
-//using static GameLauncher_Console.CRegScanner;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -69,6 +66,20 @@ namespace GameLauncher_Console
         public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
         {
             string strPlatform = GetPlatformString(ENUM);
+
+            BattleNetHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
             string cfgFile = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), BATTLE_NET_CFG);
             string dbFile = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), BATTLE_NET_DB);
             string dataPath = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), BATTLE_NET_DATA);
@@ -122,6 +133,7 @@ namespace GameLauncher_Console
                                         string lang = pi.Settings.selectedTextLanguage;
                                         if (string.IsNullOrEmpty(lang))
                                             lang = BATTLE_NET_LANGDEF;
+            */
                                         /*
                                         string timestamp = "";
                                         foreach (BnetProductConfig pc in db.productConfigs)
@@ -133,6 +145,7 @@ namespace GameLauncher_Console
                                             }
                                         }
                                         */
+            /*
                                         
                                         if (allConfig.TryGetProperty("shared_container_default_subfolder", out JsonElement sub))
                                         {
@@ -168,6 +181,7 @@ namespace GameLauncher_Console
                                                         strTitle = name.GetString();
                                                     }
                                                     break;
+            */
                                                     /*
                                                     // TODO: metadata description
                                                     if (itemProp.Name.Equals("program_associations") &&
@@ -176,6 +190,7 @@ namespace GameLauncher_Console
                                                         strDescription = descr.GetString();
                                                     }
                                                     */
+            /*
                                                 }
                                             }
                                         }
@@ -238,7 +253,7 @@ namespace GameLauncher_Console
                     }
                 }
             }
-
+            */
             /*
 			List<RegistryKey> keyList;
 
@@ -286,6 +301,7 @@ namespace GameLauncher_Console
 				}
 			}
             */
+
             CLogger.LogDebug("--------------------------");
         }
 

@@ -1,16 +1,19 @@
-﻿using Logger;
+﻿using GameFinder.RegistryUtils;
+using GameFinder.StoreHandlers.EGS;
+using Logger;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -199,16 +202,31 @@ namespace GameLauncher_Console
 						*/
 						rootDir.Delete(true);
 						return 1;
-					}
-				}
+                    }
+                }
             }
-			return 0;
-		}
+            return 0;
+        }
 
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+        [SupportedOSPlatform("windows")]
+        public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			List<string> epicIds = new();
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
+
+            EGSHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            List<string> epicIds = new();
 			string dir = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), EPIC_ITEMS);
 			if (!Directory.Exists(dir))
 			{
@@ -293,6 +311,7 @@ namespace GameLauncher_Console
 							File.WriteAllBytes($"tmp_{_name}_catalog.txt", byteSpan.ToArray());
 #endif
 							*/
+			/*
 							OperationStatus status = Base64.DecodeFromUtf8InPlace(byteSpan, out int numBytes);
 							if (status == OperationStatus.Done)
 							{
@@ -491,6 +510,7 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
 
 			CLogger.LogDebug("--------------------");
 		}

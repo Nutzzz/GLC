@@ -1,18 +1,18 @@
-﻿using HtmlAgilityPack;
+﻿using GameFinder.RegistryUtils;
+using GameFinder.StoreHandlers.Steam;
+using HtmlAgilityPack;
 using Logger;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Net;
 using System.Text;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -79,9 +79,23 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			string strInstallPath = "";
+            string strPlatform = GetPlatformString(ENUM);
+
+            SteamHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared, null);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            string strInstallPath = "";
 			string strClientPath = "";
-			string strPlatform = GetPlatformString(ENUM);
 
 			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
                 RegistryView.Registry32).OpenSubKey(STEAM_REG, RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
@@ -231,10 +245,12 @@ namespace GameLauncher_Console
 					}
 				}
 				i++;
+			*/
 				/*
 				if (i > nLibs)
 					CLogger.LogDebug("---------------------");
 				*/
+			/*
 			}
 
 			// Get not-installed games
@@ -314,6 +330,7 @@ namespace GameLauncher_Console
 					try
 					{
 						string url = string.Format("https://steamcommunity.com/profiles/{0}/games/?tab=all", userId);
+			*/
 						/*
 #if DEBUG
 						// Don't re-download if file exists
@@ -330,6 +347,7 @@ namespace GameLauncher_Console
 						doc.Load(tmpfile);
 #else
 						*/
+			/*
                         HtmlWeb web = new()
                         {
                             UseCookies = true
@@ -395,10 +413,11 @@ namespace GameLauncher_Console
 					{
 						CLogger.LogError(e);
 					}
+		    */
 
 					CLogger.LogDebug("---------------------");
-				}
-			}
+			//	}
+			//}
 		}
 
 		/*

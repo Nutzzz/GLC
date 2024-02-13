@@ -1,8 +1,8 @@
-﻿using Logger;
+﻿using GameFinder.Common;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -82,11 +82,13 @@ namespace GameLauncher_Console
             GameJolt = 28,
             [Description("Humble App")]
             Humble = 29,
-            [Description("Miscellaneous")]
-            Misc = 30
+            [Description("RobotCache")]
+            RobotCache = 30,
+            //[Description("Miscellaneous")]
+            //Misc = 31,
         }
 
-		public enum Match
+        public enum Match
 		{
 			[Description("No matches found")]
 			NoMatches = 0,
@@ -132,6 +134,9 @@ namespace GameLauncher_Console
 		/// </summary>
 		public struct ImportGameData
 		{
+			public string m_strPlatform;
+			public GameData m_gameData;
+			/*
 			public string m_strID;
 			public string m_strTitle;
 			public string m_strLaunch;
@@ -146,9 +151,14 @@ namespace GameLauncher_Console
 			public DateTime m_dateLastRun;
 			public ushort m_rating;
 			public uint m_numRuns;
+			*/
 
-			public ImportGameData(string strID, string strTitle, string strLaunch, string strIconPath, string strUninstall, string strAlias, bool bInstalled, string strPlatform, bool bFavourite = false, bool bHidden = false, List<string> tags = default, DateTime dateLastRun = default, ushort rating = 0, uint numRuns = 0)
+			public ImportGameData(string strPlatform, GameData gameData)
+			//public ImportGameData(string strID, string strTitle, string strLaunch, string strIconPath, string strUninstall, string strAlias, bool bInstalled, string strPlatform, bool bFavourite = false, bool bHidden = false, List<string> tags = default, DateTime dateLastRun = default, ushort rating = 0, uint numRuns = 0)
 			{
+				m_strPlatform = strPlatform;
+				m_gameData = gameData;
+				/*
 				m_strID = strID;
 				m_strTitle = strTitle;
 				m_strLaunch = strLaunch;
@@ -163,6 +173,7 @@ namespace GameLauncher_Console
                 m_dateLastRun = dateLastRun;
 				m_rating = rating;
 				m_numRuns = numRuns;
+				*/
 			}
 		}
 

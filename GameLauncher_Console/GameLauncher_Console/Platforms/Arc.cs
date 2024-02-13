@@ -1,13 +1,12 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameCollector.StoreHandlers.Arc;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.Versioning;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CRegScanner;
-//using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -68,10 +67,24 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			List<RegistryKey> keyList = new();
-			string strPlatform = GetPlatformString(ENUM);
-			//string arcFolder = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), "Arc"); // AppData\Roaming
+            string strPlatform = GetPlatformString(ENUM);
+
+            ArcHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
 			/*
+            List<RegistryKey> keyList = new();
+			//string arcFolder = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), "Arc"); // AppData\Roaming
+
 			string launcherPath = "";
 
 			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, 
@@ -86,6 +99,7 @@ namespace GameLauncher_Console
 			}
 			*/
 
+			/*
             using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
                 RegistryView.Registry32).OpenSubKey(Path.Combine(ARC_REG, ARC_GAMES), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
 			{
@@ -153,6 +167,8 @@ namespace GameLauncher_Console
 							new ImportGameData(strID, strTitle, strLaunch, strLaunch, "", strAlias, bInstalled, strPlatform));
 				}
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 

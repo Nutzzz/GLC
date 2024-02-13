@@ -1,4 +1,5 @@
-﻿using Logger;
+﻿using GameFinder.Common;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,9 +64,10 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		private static void FindCustomLinkFiles(ref CTempGameSet tempGameSet)
 		{
-			List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".lnk")).ToList();
+            string strPlatform = GetPlatformString(ENUM);
 
-			string strPlatform = GetPlatformString(ENUM);
+            List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".lnk")).ToList();
+			
 			foreach (string file in fileList)
 			{
 				string strPathOnly = Path.GetDirectoryName(file);
@@ -97,6 +99,7 @@ namespace GameLauncher_Console
 		private static void FindCustomBinaries(ref CTempGameSet tempGameSet)
 		{
 			string strPlatform = GetPlatformString(ENUM);
+
 			List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.AllDirectories).Where(s => s.EndsWith(".exe")).ToList();
 
 			// Big Fish Games may use .bfg for executables

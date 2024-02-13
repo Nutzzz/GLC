@@ -1,16 +1,12 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Plarium;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Runtime.Versioning;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CGameFinder;
-using static GameLauncher_Console.CJsonWrapper;
-//using static GameLauncher_Console.CRegScanner;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -65,10 +61,24 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			bool error = false;
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
+
+            PlariumHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
+            bool error = false;
+			
 			string file = Path.Combine(GetFolderPath(SpecialFolder.LocalApplicationData), PLARIUM_DB);
-			/*
 			string launcherPath = "";
 			int? lang = 1;
 
@@ -85,8 +95,8 @@ namespace GameLauncher_Console
 			}
 			*/
 
-
-			if (!File.Exists(file))
+			/*
+            if (!File.Exists(file))
 			{
                 file = Path.Combine(GetFolderPath(SpecialFolder.LocalApplicationData), "Plarium", PLARIUM_DB);
 				if (!File.Exists(file))
@@ -177,10 +187,12 @@ namespace GameLauncher_Console
 
                                         // Use website to download missing icons
                                         // Webp won't be supported until we finish switch to a cross-platform graphics library
+			*/
                                         /*
                                         if (expensiveIcons && !(bool)(CConfig.GetConfigBool(CConfig.CFG_IMGDOWN)))
 											CDock.DownloadCustomImage(strTitle, GetIconUrl(strTitle));
 										*/
+			/*
                                     }
 								}
 							}
@@ -199,6 +211,8 @@ namespace GameLauncher_Console
 				CLogger.LogInfo("Malformed {0} file: {1}", _name.ToUpper(), file);
 				return;
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 

@@ -1,16 +1,18 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Legacy;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Versioning;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -37,8 +39,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-					RegistryView.Registry64).OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+                using RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine,
+                    Microsoft.Win32.RegistryView.Registry64).OpenSubKey(LEG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
                 Process legacyProcess = new();
                 string launcherPath = Path.Combine(Path.GetDirectoryName(GetRegStrVal(key, GAME_DISPLAY_ICON)), "Legacy Games Launcher.exe");
                 if (File.Exists(launcherPath))
@@ -76,9 +78,23 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			List<RegistryKey> keyList = new();
+            string strPlatform = GetPlatformString(ENUM);
+
+            LegacyHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            List<RegistryKey> keyList = new();
 			List<string> instDirs = new();
-			string strPlatform = GetPlatformString(ENUM);
 
 			// Get installed games
 			using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
@@ -140,7 +156,7 @@ namespace GameLauncher_Console
 					if (!(string.IsNullOrEmpty(strLaunch)))
 						gameDataList.Add(
 							new ImportGameData(strID, strTitle, strLaunch, strIconPath, strUninstall, strAlias, true, strPlatform));
-
+			*/
 					/*
 					// Use website to download missing icons
 					if (!(bool)(CConfig.GetConfigBool(CConfig.CFG_IMGDOWN)))
@@ -183,6 +199,7 @@ namespace GameLauncher_Console
 						}
 					}
 					*/
+			/*
 				}
 			}
 
@@ -266,6 +283,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
+
 			CLogger.LogDebug("--------------------");
 		}
 

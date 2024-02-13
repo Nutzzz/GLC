@@ -1,15 +1,14 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Paradox;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -36,8 +35,8 @@ namespace GameLauncher_Console
         {
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-                    RegistryView.Registry32).OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
+                using RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine,
+                    Microsoft.Win32.RegistryView.Registry32).OpenSubKey(PARADOX_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM32
                 string launcherPath = Path.Combine(GetRegStrVal(key, PARADOX_PATH), "\\Paradox Launcher.exe");
                 if (File.Exists(launcherPath))
                     Process.Start(launcherPath);
@@ -73,8 +72,22 @@ namespace GameLauncher_Console
 
         public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
         {
-			List<string> dirs = new();
             string strPlatform = GetPlatformString(ENUM);
+
+            ParadoxHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
+            List<string> dirs = new();
 
             // Get installed games
             if (OperatingSystem.IsWindows())
@@ -187,6 +200,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+            */
+
 			CLogger.LogDebug("--------------------");
 		}
 

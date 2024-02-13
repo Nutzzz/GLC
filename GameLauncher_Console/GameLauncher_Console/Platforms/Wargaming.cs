@@ -1,15 +1,12 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameCollector.StoreHandlers.WargamingNet;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.Versioning;
-using System.Xml;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CGameFinder;
-using static GameLauncher_Console.CRegScanner;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -61,9 +58,24 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-			Dictionary<string, string> installDict = new();
+            string strPlatform = GetPlatformString(ENUM);
+
+            WargamingNetHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames())
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
+            Dictionary<string, string> installDict = new();
 			List<RegistryKey> keyList;
-			string strPlatform = GetPlatformString(ENUM);
+			*/
 			/*
 			string launcherPath = "";
 
@@ -81,6 +93,7 @@ namespace GameLauncher_Console
 					launcherPath = launcherPath.Substring(0, pathIndex);
 			}
 			*/
+			/*
 			string dataPath = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), WARGAMING_DATA);
 
 			try
@@ -207,6 +220,8 @@ namespace GameLauncher_Console
 					CLogger.LogError(e);
 				}
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 
