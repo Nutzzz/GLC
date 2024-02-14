@@ -110,7 +110,10 @@ namespace GameLauncher_Console
 			public ConsoleKey tagsCK2;
 			public ConsoleKey downloadCK1;
 			public ConsoleKey downloadCK2;
+			public ConsoleKey allimgCK1;
+			public ConsoleKey allimgCK2;
 		}
+
 		public struct Colours
         {
 			public ConsoleColor bgCC;
@@ -273,6 +276,8 @@ namespace GameLauncher_Console
 		public const string CFG_KEYRATEDN2	= "key_rating_down_2";
 		public const string CFG_KEYDLIMG1	= "key_download_image_1";
 		public const string CFG_KEYDLIMG2	= "key_download_image_2";
+		public const string CFG_KEYDLALL1	= "key_download_all_images_1";
+		public const string CFG_KEYDLALL2	= "key_download_all_images_2";
 		public const string CFG_PATHLEG		= "path_legendary_exe";
 		public const string CFG_TXTMAINT	= "text_main_menu_title";
 		public const string CFG_TXTCFGT		= "text_settings_title";

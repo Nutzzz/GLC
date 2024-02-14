@@ -97,18 +97,18 @@ namespace GameLauncher_Console
 		public void MainLoop(string[] args)
 		{
 			CPlatform platforms = new();
-            platforms.AddSupportedPlatform(new PlatformAmazon());
-            platforms.AddSupportedPlatform(new PlatformArc());
+			platforms.AddSupportedPlatform(new PlatformAmazon());
+			platforms.AddSupportedPlatform(new PlatformArc());
 			platforms.AddSupportedPlatform(new PlatformBattlenet());
 			//platforms.AddSupportedPlatform(new PlatformBethesda());	// deprecated May 2022
 			platforms.AddSupportedPlatform(new PlatformBigFish());
 			//platforms.AddSupportedPlatform(new PlatformCustom());		// See CPlatform.ScanGames()
 			platforms.AddSupportedPlatform(new PlatformEA());
 			platforms.AddSupportedPlatform(new PlatformEpic());
-            platforms.AddSupportedPlatform(new PlatformGameJolt());
-            platforms.AddSupportedPlatform(new PlatformGOG());
-            platforms.AddSupportedPlatform(new PlatformHumble());
-            platforms.AddSupportedPlatform(new PlatformIGClient());
+			platforms.AddSupportedPlatform(new PlatformGameJolt());
+			platforms.AddSupportedPlatform(new PlatformGOG());
+			platforms.AddSupportedPlatform(new PlatformHumble());
+			platforms.AddSupportedPlatform(new PlatformIGClient());
 			platforms.AddSupportedPlatform(new PlatformItch());
 			platforms.AddSupportedPlatform(new PlatformLegacy());
 			platforms.AddSupportedPlatform(new PlatformMicrosoft());
@@ -161,9 +161,7 @@ namespace GameLauncher_Console
 						noInteractive = true;
 					else if (gameSearch[0].Equals('s') || gameSearch[0].Equals('S'))
 					{
-						CLogger.LogInfo("Scanning for games...");
-						Console.Write("Scanning for games");  // ScanGames() will append a dot for each platform
-						platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), false);
+						platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), bFirstScan: false);
 						return;
 					}
 					else if (gameSearch[0].Equals('c') || gameSearch[0].Equals('C'))
@@ -412,9 +410,7 @@ namespace GameLauncher_Console
 							CLogger.LogError(e);
 						}
 						Console.ResetColor();
-						CLogger.LogInfo("Scanning for games...");
-						Console.Write("Scanning for games");  // ScanGames() will add dots for each platform
-						platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), false);
+						platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), bFirstScan: false);
 						continue;
 
 					case CConsoleHelper.DockSelection.cSel_Input: // Toggle arrows/typing input
@@ -957,6 +953,19 @@ namespace GameLauncher_Console
                                 default:
 									break;
 							}
+							continue;
+
+						case CConsoleHelper.DockSelection.cSel_downloadAll: // Download images
+							try
+							{
+								Console.SetCursorPosition(0, Console.WindowHeight - INPUT_BOTTOM_CUSHION);
+							}
+							catch (Exception e)
+							{
+								CLogger.LogError(e);
+							}
+							Console.ResetColor();
+							platforms.DownloadAllImages(bFirstScan: false);
 							continue;
 
 						default:
@@ -1820,6 +1829,10 @@ namespace GameLauncher_Console
 					"  Download Image: " +
 					CConsoleHelper.OutputKeys(CConfig.ShortenKeyName(CConfig.GetConfigString(CConfig.CFG_KEYDLIMG1)),
 					CConfig.ShortenKeyName(CConfig.GetConfigString(CConfig.CFG_KEYDLIMG2)), "[", "]", " | ", "N/A", 8));
+				WriteWithBreak(ref line, height, cols.entryCC, cols.entryLtCC, cols.titleCC, cols.titleLtCC,
+					"  Download All Images: " +
+					CConsoleHelper.OutputKeys(CConfig.ShortenKeyName(CConfig.GetConfigString(CConfig.CFG_KEYDLALL1)),
+					CConfig.ShortenKeyName(CConfig.GetConfigString(CConfig.CFG_KEYDLALL2)), "[", "]", " | ", "N/A", 8));
 				if (!(bool)CConfig.GetConfigBool(CConfig.CFG_NOQUIT))
 					WriteWithBreak(ref line, height, cols.entryCC, cols.entryLtCC, cols.titleCC, cols.titleLtCC,
 						"            Quit: " +

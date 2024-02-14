@@ -50,7 +50,9 @@ namespace GameLauncher_Console
 		private const string GAMES_ARRAY_ID					= "id";
 		private const string GAMES_ARRAY_TITLE				= "title";
 		private const string GAMES_ARRAY_LAUNCH				= "launch";
+		private const string GAMES_ARRAY_LAUNCHURL			= "launchurl";
 		private const string GAMES_ARRAY_ICON				= "icon";
+		private const string GAMES_ARRAY_ICONURL			= "iconurl";
 		private const string GAMES_ARRAY_UNINSTALLER		= "uninstaller";
 		private const string GAMES_ARRAY_PLATFORM			= "platform";
 		private const string GAMES_ARRAY_INSTALLED			= "installed";
@@ -413,7 +415,9 @@ namespace GameLauncher_Console
                         continue;
 
                     string strLaunch = GetStringProperty(jElement, GAMES_ARRAY_LAUNCH);
+                    string strLaunchUrl = GetStringProperty(jElement, GAMES_ARRAY_LAUNCHURL);
                     string strIconPath = GetStringProperty(jElement, GAMES_ARRAY_ICON);
+                    string strIconUrl = GetStringProperty(jElement, GAMES_ARRAY_ICONURL);
                     string strUninstall = GetStringProperty(jElement, GAMES_ARRAY_UNINSTALLER);
                     bool bIsInstalled = GetBoolProperty(jElement, GAMES_ARRAY_INSTALLED);
                     bool bIsFavourite = GetBoolProperty(jElement, GAMES_ARRAY_FAVOURITE);
@@ -426,7 +430,7 @@ namespace GameLauncher_Console
                     ushort rating = GetUShortProperty(jElement, GAMES_ARRAY_RATING);
                     double fOccurCount = GetDoubleProperty(jElement, GAMES_ARRAY_FREQUENCY);
 
-                    AddGame(strID, strTitle, strLaunch, strIconPath, strUninstall, bIsInstalled, bIsFavourite, bIsNew, bIsHidden, strAlias, strPlatform, new List<string>(), dateLastRun, rating, (uint)numRuns, fOccurCount);
+                    AddGame(strID, strTitle, strLaunch, strLaunchUrl, strIconPath, strIconUrl, strUninstall, bIsInstalled, bIsFavourite, bIsNew, bIsHidden, strAlias, strPlatform, new List<string>(), dateLastRun, rating, (uint)numRuns, fOccurCount);
                     nGameCount++;
                 }
                 SortGames(sortMethod, faveSort, instSort, ignoreArticle);
@@ -652,6 +656,8 @@ namespace GameLauncher_Console
 				Enum.TryParse(CConfig.GetConfigString(CConfig.CFG_KEYRATEDN2), true, out hotkeys.ratingDownCK2);
 				Enum.TryParse(CConfig.GetConfigString(CConfig.CFG_KEYDLIMG1), true, out hotkeys.downloadCK1);
 				Enum.TryParse(CConfig.GetConfigString(CConfig.CFG_KEYDLIMG2), true, out hotkeys.downloadCK2);
+				Enum.TryParse(CConfig.GetConfigString(CConfig.CFG_KEYDLALL1), true, out hotkeys.allimgCK1);
+				Enum.TryParse(CConfig.GetConfigString(CConfig.CFG_KEYDLALL2), true, out hotkeys.allimgCK2);
 			}
 			catch (Exception e)
 			{
@@ -1150,6 +1156,8 @@ namespace GameLauncher_Console
 			SetDefaultVal(CConfig.CFG_KEYRATEDN2, force);
 			SetDefaultVal(CConfig.CFG_KEYDLIMG1, force);
 			SetDefaultVal(CConfig.CFG_KEYDLIMG2, force);
+			SetDefaultVal(CConfig.CFG_KEYDLALL1, force);
+			SetDefaultVal(CConfig.CFG_KEYDLALL2, force);
 		}
 
 		/// <summary>
