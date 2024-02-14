@@ -1,7 +1,7 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EADesktop;
-using GameFinder.StoreHandlers.EADesktop.Crypto;
-using GameFinder.StoreHandlers.EADesktop.Crypto.Windows;
+using GameCollector.StoreHandlers.EADesktop;
+using GameCollector.StoreHandlers.EADesktop.Crypto;
+using GameCollector.StoreHandlers.EADesktop.Crypto.Windows;
 using Logger;
 using PureOrigin.API;
 using SHA3.Net;

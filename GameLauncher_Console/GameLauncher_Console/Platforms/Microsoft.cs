@@ -1,4 +1,4 @@
-﻿using GameFinder.StoreHandlers.Xbox;
+﻿using GameCollector.StoreHandlers.Xbox;
 using Logger;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.Steam;
+using GameCollector.StoreHandlers.Steam;
 using HtmlAgilityPack;
 using Logger;
 using System;

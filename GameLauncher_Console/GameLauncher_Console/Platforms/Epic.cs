@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EGS;
+using GameCollector.StoreHandlers.EGS;
 using Logger;
 using System;
 using System.Buffers;

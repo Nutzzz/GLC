@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.GOG;
+using GameCollector.StoreHandlers.GOG;
 using Logger;
 using System;
 using System.Collections.Generic;
