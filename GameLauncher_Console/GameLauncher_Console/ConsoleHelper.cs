@@ -164,6 +164,7 @@ namespace GameLauncher_Console
 		/// </summary>
 		public enum DockSelection
 		{
+			cSel_downloadAll = -26,
 			cSel_Tags = -25,
 			cSel_raiseRating = -24,
 			cSel_lowerRating = -23,
@@ -841,6 +842,9 @@ namespace GameLauncher_Console
 				else if (key == keys.scanCK1 || key == keys.scanCK2)
 					return (int)DockSelection.cSel_Rescan; // Rescan the registry and the 'CustomGames' folder for new games
 
+				else if (key == keys.allimgCK1 || key == keys.allimgCK2)
+					return (int)DockSelection.cSel_downloadAll; // Rescan the registry and the 'CustomGames' folder for new games
+
 			} while (key != keys.selectCK1 && key != keys.selectCK2);
 			
 			return (int)DockSelection.cSel_Default;
@@ -962,6 +966,9 @@ namespace GameLauncher_Console
 				}
 				else if (strInput.Equals("/icon", CDock.IGNORE_CASE))
 					return (int)DockSelection.cSel_Image;
+
+				else if (strInput.Equals("/allicon", CDock.IGNORE_CASE))
+					return (int)DockSelection.cSel_downloadAll;
 
 				else if (strInput.Equals("/sort", CDock.IGNORE_CASE))
 					return (int)DockSelection.cSel_Sort;
