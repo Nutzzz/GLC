@@ -48,7 +48,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
             if (OperatingSystem.IsWindows())
                 _ = CDock.StartShellExecute(START_GAME + GetGameID(game.ID));
             else

@@ -46,7 +46,7 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public static int InstallGame(CGame game)
 		{
-			//CDock.DeleteCustomImage(game.Title, false);
+			//CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			return -1;
 		}

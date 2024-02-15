@@ -182,7 +182,7 @@ namespace GameLauncher_Console
 			}
 
 			ConsoleFontInfo cfi = new();
-			if (!GetCurrentConsoleFont(outHandle, false, cfi))
+			if (!GetCurrentConsoleFont(outHandle, bMaximumWindow: false, cfi))
 			{
 				throw new InvalidOperationException("Unable to get font information.");
 			}

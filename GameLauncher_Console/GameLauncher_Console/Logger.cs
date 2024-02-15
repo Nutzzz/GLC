@@ -48,7 +48,7 @@ namespace Logger
 				m_strFilePath = strPathToLog;
 				try
 				{
-                    using StreamWriter writer = new(m_strFilePath, true);
+                    using StreamWriter writer = new(m_strFilePath, append: true);
                     writer.WriteLine("_____S_T_A_R_T_E_D_____");
                     writer.Close();
                 }
@@ -59,7 +59,7 @@ namespace Logger
 			// Try to create a file and write the starting line
 			try
 			{
-                using StreamWriter writer = new(strPathToLog, true);
+                using StreamWriter writer = new(strPathToLog, append: true);
                 writer.WriteLine("_____S_T_A_R_T_E_D_____");
                 writer.Close();
             }
@@ -110,7 +110,7 @@ namespace Logger
 
 			try
 			{
-                using StreamWriter writer = new(m_strFilePath, true);
+                using StreamWriter writer = new(m_strFilePath, append: true);
                 string strDateTime = DateTime.Now.ToString();
                 string msg = string.Format(strMessage, list);
                 string line = string.Format("{0} : {1}", strDateTime, msg);
@@ -148,7 +148,7 @@ namespace Logger
 
 			try
 			{
-                using StreamWriter writer = new(m_strFilePath, true);
+                using StreamWriter writer = new(m_strFilePath, append: true);
                 string strDateTime = DateTime.Now.ToString();
                 string msg = string.Format("ERROR: {0} | {1} {2} | {3}", ex.Message, ex.Source, ex.StackTrace, strMessage ?? "");
                 string line = string.Format("{0} : {1}", strDateTime, msg);
@@ -172,7 +172,7 @@ namespace Logger
 
 			try
 			{
-                using StreamWriter writer = new(m_strFilePath, true);
+                using StreamWriter writer = new(m_strFilePath, append: true);
                 string strDateTime = DateTime.Now.ToString();
                 string msg = string.Format("FATAL ERROR: {0} | {1} {2}", ex.Message, ex.Source, ex.StackTrace);
                 string line = string.Format("{0} : {1}", strDateTime, msg);

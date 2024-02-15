@@ -89,7 +89,7 @@ namespace GameLauncher_Console
                 FieldInfo field = source.GetType().GetField(source.ToString());
 
                 DescriptionAttribute[] attr = (DescriptionAttribute[])field.GetCustomAttributes(
-                    typeof(DescriptionAttribute), false);
+                    typeof(DescriptionAttribute), inherit: false);
 
                 if (attr != null && attr.Length > 0) return attr[0].Description;
             }
