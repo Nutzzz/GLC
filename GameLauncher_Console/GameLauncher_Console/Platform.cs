@@ -174,9 +174,9 @@ namespace GameLauncher_Console
 		/// Container for a single platform
 		/// </summary>
 		public struct PlatformObject
-        {
+		{
 			public PlatformObject(int platformID, string name, int gameCount, string description)
-            {
+			{
 				PlatformID	= platformID;
 				Name		= name;
 				GameCount	= gameCount;
@@ -209,9 +209,9 @@ namespace GameLauncher_Console
 		}
 
 		public void AddSupportedPlatform(IPlatform platform)
-        {
+		{
 			_platforms.Add(platform);
-        }
+		}
 
 		/// <summary>
 		/// Scan the registry and filesystem for games, add new games to memory and export into JSON document
@@ -252,13 +252,13 @@ namespace GameLauncher_Console
 				{
 					tempGameSet.InsertGame(data.m_gameData.GameId,
 						data.m_gameData.GameName,
-                        data.m_gameData.Launch == default ? data.m_gameData.LaunchUrl : (string.IsNullOrEmpty(data.m_gameData.LaunchArgs) ? data.m_gameData.Launch.GetFullPath() : data.m_gameData.Launch.GetFullPath() + " " + data.m_gameData.LaunchArgs),
+						data.m_gameData.Launch == default ? data.m_gameData.LaunchUrl : (string.IsNullOrEmpty(data.m_gameData.LaunchArgs) ? data.m_gameData.Launch.GetFullPath() : data.m_gameData.Launch.GetFullPath() + " " + data.m_gameData.LaunchArgs),
 						data.m_gameData.LaunchUrl,
 						data.m_gameData.Icon == default ? "" : data.m_gameData.Icon.GetFullPath(),
 						data.m_gameData.Metadata == default ? "" : data.m_gameData.Metadata.TryGetValue("IconUrl", out var urls) && urls.Count > 0 ? urls[0] : (data.m_gameData.Metadata.TryGetValue("ImageUrl", out urls) && urls.Count > 0 ? urls[0] : ""),
 						data.m_gameData.Uninstall == default ? data.m_gameData.UninstallUrl : (string.IsNullOrEmpty(data.m_gameData.UninstallArgs) ? data.m_gameData.Uninstall.GetFullPath() : data.m_gameData.Uninstall.GetFullPath() + " " + data.m_gameData.UninstallArgs),
 						data.m_gameData.IsInstalled,
-						false, true, false,
+						bIsFavourite: false, bIsNew: true, bIsHidden: false,
 						GetAlias(data.m_gameData.GameName),
 						data.m_strPlatform,
 						new List<string>(), DateTime.MinValue, 0, 0, 0f);
@@ -274,12 +274,12 @@ namespace GameLauncher_Console
 			//	Console.Write(".");
 
 			CLogger.LogInfo("Looking for {0}...", GetPlatformString(GamePlatform.Custom));
-            
+
 			PlatformCustom custom = new();
 			custom.GetGames(ref tempGameSet);
 			MergeGameSets(tempGameSet);
 			if (bFirstScan)
-				SortGames((int)CConsoleHelper.SortMethod.cSort_Alpha, false, (bool)CConfig.GetConfigBool(CConfig.CFG_USEINST), true);
+				SortGames((int)CConsoleHelper.SortMethod.cSort_Alpha, faveSort: false, (bool)CConfig.GetConfigBool(CConfig.CFG_USEINST), ignoreArticle: true);
 			CLogger.LogDebug("-----------------------");
 			ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
 			Console.SetCursorPosition(0, Console.CursorTop);
@@ -337,18 +337,18 @@ namespace GameLauncher_Console
 		/// </summary>
 		/// <returns>List of PlatformObjects</returns>
 		public static Dictionary<string, PlatformObject>GetPlatforms()
-        {
+		{
 			Dictionary<string, PlatformObject> platforms = new();
 			m_qryRead.MakeFieldsNull();
 			if(m_qryRead.Select() == SQLiteErrorCode.Ok)
-            {
+			{
 				do
 				{
 					platforms[m_qryRead.Name] = new PlatformObject(m_qryRead);
 				} while(m_qryRead.Fetch());
-            }
+			}
 			return platforms;
-        }
+		}
 
 		/// <summary>
 		/// Insert specified platform into the database
@@ -356,12 +356,12 @@ namespace GameLauncher_Console
 		/// <param name="platform">The PlatformObject to insert</param>
 		/// <returns>True on insert success, otherwise false</returns>
 		public static bool InsertPlatform(PlatformObject platform)
-        {
+		{
 			m_qryWrite.MakeFieldsNull();
 			m_qryWrite.Name			= platform.Name;
 			m_qryWrite.Description	= platform.Description;
 			return m_qryWrite.Insert() == SQLiteErrorCode.Ok;
-        }
+		}
 
 		/// <summary>
 		/// Insert specified platform into the database
@@ -383,7 +383,7 @@ namespace GameLauncher_Console
 		/// <param name="platform">The PlatformObject to write</param>
 		/// <returns>True on update success, otherwise false</returns>
 		public static bool UpdatePlatform(PlatformObject platform)
-        {
+		{
 			m_qryWrite.MakeFieldsNull();
 			m_qryWrite.PlatformID	= platform.PlatformID;
 			m_qryWrite.Name			= platform.Name;
@@ -397,10 +397,10 @@ namespace GameLauncher_Console
 		/// <param name="platformID">The platformID to delete</param>
 		/// <returns>True on delete success, otherwise false</returns>
 		public static bool RemovePlatform(int platformID)
-        {
+		{
 			m_qryWrite.MakeFieldsNull();
 			m_qryWrite.PlatformID = platformID;
 			return m_qryWrite.Delete() == SQLiteErrorCode.Ok;
 		}
-    }
+	}
 }

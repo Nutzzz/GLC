@@ -188,8 +188,7 @@ namespace GameLauncher_Console
 			if (nGameCount < 1)
 			{
 				CLogger.LogInfo("{0} is empty, corrupt, or outdated. Scanning for games...", _game_json_file);
-				Console.Write("Scanning for games");  // ScanGames() will add dots for each platform
-				platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), true);
+				platforms.ScanGames((bool)CConfig.GetConfigBool(CConfig.CFG_USECUST), !(bool)CConfig.GetConfigBool(CConfig.CFG_IMGSCAN), bFirstScan: true);
 			}
 
 			return !parseError;
@@ -584,7 +583,7 @@ namespace GameLauncher_Console
 				CLogger.LogError(e);
 				Console.WriteLine($"ERROR: Bad colour value. Resetting defaults...");
 				parseError = true;
-				SetConfigDefaults(false, false, false, false, false, true, false, false);
+				SetConfigDefaults(forceAll: false, boolOnly: false, listOnly: false, numOnly: false, longOnly: false, colourOnly: true, keyOnly: false, textOnly: false);
 			}
 			try
 			{
@@ -664,7 +663,7 @@ namespace GameLauncher_Console
 				CLogger.LogError(e);
 				Console.WriteLine($"ERROR: Bad hotkey value. Resetting defaults...");
 				parseError = true;
-				SetConfigDefaults(false, false, false, false, false, false, true, false);
+				SetConfigDefaults(forceAll: false, boolOnly: false, listOnly: false, numOnly: false, longOnly: false, colourOnly: false, keyOnly: true, textOnly: false);
 			}
 			return !parseError;
 		}
@@ -983,7 +982,7 @@ namespace GameLauncher_Console
 		/// </summary>
 		private static void SetConfigDefaults(bool forceAll)
 		{
-			SetConfigDefaults(forceAll, false, false, false, false, false, false, false);
+			SetConfigDefaults(forceAll, boolOnly: false, listOnly: false, numOnly: false, longOnly: false, colourOnly: false, keyOnly: false, textOnly: false);
         }
 
 		/// <summary>

@@ -88,7 +88,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			/*
 			if (OperatingSystem.IsWindows())
@@ -240,7 +240,7 @@ namespace GameLauncher_Console
 									}
 									if (string.IsNullOrEmpty(strTitle))
 									{
-										TextInfo ti = new CultureInfo("en-US", false).TextInfo;
+										TextInfo ti = new CultureInfo("en-US", useUserOverride: false).TextInfo;
 										strTitle = ti.ToTitleCase(slug.Replace("-", " "));
 									}
 
