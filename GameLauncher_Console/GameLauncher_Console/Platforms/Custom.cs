@@ -44,7 +44,7 @@ namespace GameLauncher_Console
 				_ = Process.Start(game.Launch);
 		}
 
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false) => throw new NotImplementedException();
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false) => throw new NotImplementedException();
 
 		public void GetGames(ref CTempGameSet tempGameSet)
         {

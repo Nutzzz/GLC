@@ -13,6 +13,7 @@ using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
 using FileSystem = NexusMods.Paths.FileSystem;
+using GameFinder.Common;
 
 namespace GameLauncher_Console
 {
@@ -100,12 +101,12 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
             HumbleHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {

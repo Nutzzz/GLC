@@ -1,4 +1,5 @@
-﻿using Logger;
+﻿using GameFinder.Common;
+using Logger;
 using SqlDB;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace GameLauncher_Console
 		void GetEntitlements();
 		*/
 
-		void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons);
+		void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons);
 		//string GetIconUrl(CGame game);
 		//string GetGameID(string id);
 	}
@@ -228,6 +229,13 @@ namespace GameLauncher_Console
 			var cursor = Console.CursorLeft;
 			if (!bOnlyCustom)
 			{
+				Settings settings = new()
+				{
+					BaseOnly = true,
+					GamesOnly = false,
+					InstalledOnly = false,
+					OwnedOnly = true,
+				};
 				foreach (IPlatform platform in _platforms)
 				{
 					//if (bFirstScan)
@@ -239,7 +247,7 @@ namespace GameLauncher_Console
 					//	Console.Write(".");
 					CLogger.LogInfo("Looking for {0} games...", platform.Description);
 
-					platform.GetGames(gameDataList, bExpensiveIcons);
+					platform.GetGames(gameDataList, settings, bExpensiveIcons);
 
 					//if (bFirstScan)
 					{

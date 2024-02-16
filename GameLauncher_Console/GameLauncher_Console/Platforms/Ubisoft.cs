@@ -1,4 +1,5 @@
 ﻿using GameCollector.StoreHandlers.Ubisoft;
+using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using Logger;
 using System;
@@ -67,21 +68,24 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
-            string strPlatform = GetPlatformString(ENUM);
+			string strPlatform = GetPlatformString(ENUM);
 
-            UbisoftHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
-            {
-                if (game.IsT0)
-                {
-                    CLogger.LogDebug("* " + game.AsT0.GameName);
-                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
-                }
-                else
-                    CLogger.LogWarn(game.AsT1.Message);
-            }
+			UbisoftHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+			foreach (var game in handler.FindAllGames(settings))
+			{
+				if (game.IsT0)
+				{
+					if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+					{
+						CLogger.LogDebug("* " + game.AsT0.GameName);
+						gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+					}
+				}
+				else
+					CLogger.LogWarn(game.AsT1.Message);
+			}
 
 			/*
             List<RegistryKey> keyList;

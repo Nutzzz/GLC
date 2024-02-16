@@ -1,4 +1,5 @@
 ﻿using GameCollector.StoreHandlers.Itch;
+using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using Logger;
 using Microsoft.Win32;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
@@ -101,12 +103,13 @@ namespace GameLauncher_Console
                 Process.Start(game.Launch);
         }
 
-        public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
-		{
+        //[SupportedOSPlatform("windows")]
+        public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
+        {
             string strPlatform = GetPlatformString(ENUM);
 
-            ItchHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
-            foreach (var game in handler.FindAllGames())
+            ItchHandler handler = new(FileSystem.Shared, null); // WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {

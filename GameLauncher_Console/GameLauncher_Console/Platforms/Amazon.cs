@@ -1,4 +1,5 @@
 ﻿using GameCollector.StoreHandlers.Amazon;
+using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using Logger;
 using System;
@@ -99,7 +100,7 @@ namespace GameLauncher_Console
         }
 
         [SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
         {
             string strPlatform = GetPlatformString(ENUM);
             
@@ -107,7 +108,7 @@ namespace GameLauncher_Console
             var windowsRegistry = WindowsRegistry.Shared;
             
             AmazonHandler handler = new(windowsRegistry, realFileSystem);
-            foreach (var game in handler.FindAllGames())
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {

@@ -1,4 +1,5 @@
-﻿using GameFinder.StoreHandlers.Xbox;
+﻿using GameCollector.StoreHandlers.Xbox;
+using GameFinder.Common;
 using Logger;
 using System;
 using System.Collections.Generic;
@@ -60,12 +61,12 @@ namespace GameLauncher_Console
 				Process.Start(game.Launch);
 		}
         [SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
             XboxHandler handler = new(FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {
