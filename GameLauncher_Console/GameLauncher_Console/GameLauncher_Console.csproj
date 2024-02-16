@@ -155,25 +155,25 @@
   </ItemGroup>
   <ItemGroup>
     <!--
-    <PackageReference Include="GameCollector" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.EmuHandlers.Dolphin" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.EmuHandlers.MAME" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Amazon" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Arc" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.EADesktop" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.EGS" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.GOG" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.IGClient" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Itch" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Legacy" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Oculus" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Paradox" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Plarium" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.RobotCache" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Rockstar" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Steam" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Ubisoft" Version="4.2.0.2" />
-    <PackageReference Include="GameCollector.StoreHandlers.Xbox" Version="4.2.0.2" />
+    <PackageReference Include="GameCollector" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.EmuHandlers.Dolphin" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.EmuHandlers.MAME" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Amazon" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Arc" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.EADesktop" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.EGS" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.GOG" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.IGClient" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Itch" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Legacy" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Oculus" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Paradox" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Plarium" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.RobotCache" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Rockstar" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Steam" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Ubisoft" Version="4.2.0.5" />
+    <PackageReference Include="GameCollector.StoreHandlers.Xbox" Version="4.2.0.5" />
     -->
     <PackageReference Include="protobuf-net" Version="3.2.30" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.30" />
@@ -185,7 +185,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.2" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="SQLite" Version="3.13.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
