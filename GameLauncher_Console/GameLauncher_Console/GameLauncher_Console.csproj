@@ -129,7 +129,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PureOrigin.API\Src\PureOrigin.API\PureOrigin.API.csproj" />	
+    <ProjectReference Include="..\..\PureOrigin.API\Src\PureOrigin.API\PureOrigin.API.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\GameCollector\src\GameFinder\GameFinder.csproj" />

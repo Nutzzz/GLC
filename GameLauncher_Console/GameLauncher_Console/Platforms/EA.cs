@@ -1,7 +1,7 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EADesktop;
-using GameFinder.StoreHandlers.EADesktop.Crypto;
-using GameFinder.StoreHandlers.EADesktop.Crypto.Windows;
+using GameCollector.StoreHandlers.EADesktop;
+using GameCollector.StoreHandlers.EADesktop.Crypto;
+using GameCollector.StoreHandlers.EADesktop.Crypto.Windows;
 using Logger;
 using PureOrigin.API;
 using SHA3.Net;
@@ -88,7 +88,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			/*
 			if (OperatingSystem.IsWindows())
@@ -240,7 +240,7 @@ namespace GameLauncher_Console
 									}
 									if (string.IsNullOrEmpty(strTitle))
 									{
-										TextInfo ti = new CultureInfo("en-US", false).TextInfo;
+										TextInfo ti = new CultureInfo("en-US", useUserOverride: false).TextInfo;
 										strTitle = ti.ToTitleCase(slug.Replace("-", " "));
 									}
 

@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.GOG;
+using GameCollector.StoreHandlers.GOG;
 using Logger;
 using System;
 using System.Collections.Generic;
@@ -72,7 +72,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
             if (OperatingSystem.IsWindows())
                 _ = CDock.StartShellExecute(INSTALL_GAME + GetGameID(game.ID));
             else

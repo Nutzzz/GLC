@@ -46,7 +46,7 @@ namespace GameLauncher_Console
 			// Some games don't provide a valid ID
 			if (game.ID.StartsWith(UPLAY_PREFIX))
 			{
-				//CDock.DeleteCustomImage(game.Title, false);
+				//CDock.DeleteCustomImage(game.Title, justBackups: false);
 				if (OperatingSystem.IsWindows())
 					CDock.StartShellExecute(START_GAME + GetGameID(game.ID));
 				else

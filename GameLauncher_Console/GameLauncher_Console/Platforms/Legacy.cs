@@ -61,7 +61,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			//CDock.DeleteCustomImage(game.Title, false);
+			//CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			return -1;
 		}

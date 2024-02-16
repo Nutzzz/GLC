@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EGS;
+using GameCollector.StoreHandlers.EGS;
 using Logger;
 using System;
 using System.Buffers;
@@ -54,7 +54,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
 			//bool useEGL = (bool)CConfig.GetConfigBool(CConfig.CFG_USEEGL);
 			bool useLeg = (bool)CConfig.GetConfigBool(CConfig.CFG_USELEG);
 			string pathLeg = CConfig.GetConfigString(CConfig.CFG_PATHLEG);
