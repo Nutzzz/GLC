@@ -58,22 +58,25 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
 		{
-            string strPlatform = GetPlatformString(ENUM);
+			string strPlatform = GetPlatformString(ENUM);
 
-            WargamingNetHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
-            {
-                if (game.IsT0)
-                {
-                    CLogger.LogDebug("* " + game.AsT0.GameName);
-                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
-                }
-                else
-                    CLogger.LogWarn(game.AsT1.Message);
-            }
+			WargamingNetHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+			foreach (var game in handler.FindAllGames())
+			{
+				if (game.IsT0)
+				{
+					if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+					{
+						CLogger.LogDebug("* " + game.AsT0.GameName);
+						gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+					}
+				}
+				else
+					CLogger.LogWarn(game.AsT1.Message);
+			}
 
 			/*
-            Dictionary<string, string> installDict = new();
+			Dictionary<string, string> installDict = new();
 			List<RegistryKey> keyList;
 			*/
 			/*
