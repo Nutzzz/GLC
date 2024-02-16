@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
@@ -101,17 +102,21 @@ namespace GameLauncher_Console
                 Process.Start(game.Launch);
         }
 
+        //[SupportedOSPlatform("windows")]
         public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
-		{
+        {
             string strPlatform = GetPlatformString(ENUM);
 
-            ItchHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
+            ItchHandler handler = new(FileSystem.Shared, null); // WindowsRegistry.Shared);
             foreach (var game in handler.FindAllGames())
             {
                 if (game.IsT0)
                 {
-                    CLogger.LogDebug("* " + game.AsT0.GameName);
-                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+                    {
+                        CLogger.LogDebug("* " + game.AsT0.GameName);
+                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    }
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);

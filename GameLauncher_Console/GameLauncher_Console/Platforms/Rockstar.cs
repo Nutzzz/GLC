@@ -68,8 +68,11 @@ namespace GameLauncher_Console
             {
                 if (game.IsT0)
                 {
-                    CLogger.LogDebug("* " + game.AsT0.GameName);
-                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+                    {
+                        CLogger.LogDebug("* " + game.AsT0.GameName);
+                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    }
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);
