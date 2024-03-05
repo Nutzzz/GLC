@@ -16,6 +16,11 @@ using System.Reflection;
 //using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Security.Cryptography;
+using System.Security;
+
+using System.Text;
+
 //using System.Security;
 //using System.Security.Permissions;
 //using System.Text;
@@ -2312,7 +2317,89 @@ namespace GameLauncher_Console
 			}
 		}
 
-		[SupportedOSPlatform("windows")]
+#nullable enable
+        public static bool GetPassword(string prompt, string config, out SecureString? password)
+		{
+            password = new();
+            try
+            {
+                string? encrypted = CConfig.GetConfigString(config);
+                if (!string.IsNullOrEmpty(encrypted))
+                {
+                    Span<byte> byteSpan = Convert.FromBase64String(encrypted);
+                    if (OperatingSystem.IsWindows())
+                    {
+                        Array.ForEach(Encoding.UTF8.GetString(ProtectedData.Unprotect(byteSpan.ToArray(), null, DataProtectionScope.CurrentUser)).ToArray(), password.AppendChar);
+                    }
+                    else  // If we ever support other OSes, we will need to have a POSIX method to encrypt the password
+                        Array.ForEach(Encoding.UTF8.GetString(byteSpan).ToArray(), password.AppendChar);
+                    password.MakeReadOnly();
+                }
+
+                if (string.IsNullOrEmpty(encrypted))
+                {
+                    string? strPwd = InputPassword(prompt + " >>> ", new());
+                    if (!string.IsNullOrEmpty(strPwd))
+                    {
+                        Span<byte> byteSpan = new();
+                        if (OperatingSystem.IsWindows())
+                            byteSpan = ProtectedData.Protect(Encoding.UTF8.GetBytes(strPwd), null, DataProtectionScope.CurrentUser);
+                        else  // If we ever support other OSes, we will need to have a POSIX method to encrypt the password
+                            byteSpan = Encoding.UTF8.GetBytes(strPwd);
+                        password = new NetworkCredential("", strPwd).SecurePassword;
+                        password.MakeReadOnly();
+                        encrypted = Convert.ToBase64String(byteSpan);
+                        CConfig.SetConfigValue(config, encrypted);
+                        byteSpan = null;
+                    }
+                    strPwd = null;
+                    ClearInputLine(new());
+                }
+                encrypted = null;
+                if (password.Length > 0)
+                    return true;
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError(e);
+            }
+
+            return false;
+        }
+
+        public static bool GetLogin(string prompt, string config, out string? input, bool email = false)
+        {
+            input = CConfig.GetConfigString(config);
+            try
+            {
+                if (string.IsNullOrEmpty(input))
+                {
+                    input = InputPrompt(prompt + " >>> ", new());
+                    ClearInputLine(new());
+                }
+
+                if (string.IsNullOrEmpty(input))
+                    CConfig.SetConfigValue(config, "skipped");
+                else if (email && (!input.Contains('@') || !input.Contains('.')))
+                    CConfig.SetConfigValue(config, "invalid");
+                else
+                {
+                    CConfig.SetConfigValue(config, input);
+                    ClearInputLine(new());
+                }
+                if (!string.IsNullOrEmpty(input))
+                    return true;
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError(e);
+            }
+
+            return false;
+        }
+#nullable disable
+
+        [SupportedOSPlatform("windows")]
 		public static Guid GetGuid()
 		{
 			using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,

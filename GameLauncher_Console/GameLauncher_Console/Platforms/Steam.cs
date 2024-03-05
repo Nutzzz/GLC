@@ -13,6 +13,7 @@ using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using FileSystem = NexusMods.Paths.FileSystem;
+using System.Security;
 
 namespace GameLauncher_Console
 {
@@ -81,13 +82,18 @@ namespace GameLauncher_Console
 		{
             string strPlatform = GetPlatformString(ENUM);
 
-            SteamHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared, null);
+            _ = CDock.GetLogin(_name + " API key <steamcommunity.com/dev/apikey>", CConfig.CFG_STEAMAPI, out string? apiKey, false) && (!apiKey.Equals("skipped"));
+
+            SteamHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared, apiKey);
             foreach (var game in handler.FindAllGames())
             {
                 if (game.IsT0)
                 {
-                    CLogger.LogDebug("* " + game.AsT0.GameName);
-                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+                    {
+                        CLogger.LogDebug("* " + game.AsT0.GameName);
+                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                    }
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);

@@ -183,6 +183,7 @@ namespace GameLauncher_Console
 		public const string CFG_IMGPOS		= "num_selected_image_y_location_percent";
 		public const string CFG_COLSIZE		= "num_grid_text_min_column_characters";
 		public const string CFG_STEAMID		= "num_steam_id";
+		public const string CFG_STEAMAPI	= "text_steam_apikey";
 		public const string CFG_OCULUSID	= "text_oculus_username";
 		public const string CFG_ORIGINID	= "text_ea_email";
 		public const string CFG_ORIGINPW	= "base64_ea_password";
