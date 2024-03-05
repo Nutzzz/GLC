@@ -1,27 +1,26 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EADesktop;
-using GameFinder.StoreHandlers.EADesktop.Crypto;
-using GameFinder.StoreHandlers.EADesktop.Crypto.Windows;
+using GameCollector.StoreHandlers.EADesktop;
+using GameCollector.StoreHandlers.EADesktop.Crypto.Windows;
 using Logger;
-using PureOrigin.API;
-using SHA3.Net;
+//using PureOrigin.API;
+//using SHA3.Net;
 using System;
-using System.Buffers;
+//using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
+//using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Management;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices;
+//using System.Linq;
+//using System.Management;
+//using System.Net;
+//using System.Net.Http;
+//using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+//using System.Security;
+//using System.Security.Cryptography;
+//using System.Text;
+//using System.Threading.Tasks;
+//using System.Xml;
 using static GameLauncher_Console.CGameData;
 using FileSystem = NexusMods.Paths.FileSystem;
 
@@ -66,7 +65,7 @@ namespace GameLauncher_Console
 
         private static readonly string _name	= Enum.GetName(typeof(GamePlatform), ENUM);
         private static readonly string _hwfile	= string.Format("{0}_hwinfo.txt", _name);
-        private readonly static byte[] _ea_iv	= { 0x84, 0xef, 0xc4, 0xb8, 0x36, 0x11, 0x9c, 0x20, 0x41, 0x93, 0x98, 0xc3, 0xf3, 0xf2, 0xbc, 0xef, };
+        private readonly static byte[] _ea_iv	= [0x84, 0xef, 0xc4, 0xb8, 0x36, 0x11, 0x9c, 0x20, 0x41, 0x93, 0x98, 0xc3, 0xf3, 0xf2, 0xbc, 0xef,];
 
         GamePlatform IPlatform.Enum => ENUM;
 
@@ -133,7 +132,8 @@ namespace GameLauncher_Console
 
             if (!(bool)CConfig.GetConfigBool(CConfig.CFG_INSTONLY))
             {
-                if (GetLogin(out string email, out SecureString password) && (!email.Equals("skipped") && !email.Equals("invalid") && !password.Equals(null) && password.Length > 0))
+				if (CDock.GetLogin(_name + " e-mail", CConfig.CFG_ORIGINID, out string? email, true) && (!email.Equals("skipped") && !email.Equals("invalid"))
+				&& (CDock.GetPassword(_name + " password", CConfig.CFG_ORIGINPW, out SecureString? password) && !password.Equals(null) && password.Length > 0))
                 {
                     ownedGames = GetOwnedGames(email, password).Result;
                     password.Dispose();
@@ -427,7 +427,9 @@ namespace GameLauncher_Console
 
 		public static string GetIconUrl(CGame game)
 		{
-			if (GetLogin(out string email, out SecureString password) && (!email.Equals("skipped") && !email.Equals("invalid") && !password.Equals(null) && password.Length > 0))
+            /*
+            if (CDock.GetLogin(_name + " e-mail", CConfig.CFG_ORIGINID, out string? email, true) && (!email.Equals("skipped") && !email.Equals("invalid"))
+            && (CDock.GetPassword(_name + " password", CConfig.CFG_ORIGINPW, out SecureString? password) && !password.Equals(null) && password.Length > 0))
 			{
 				List<string[]> games = GetOwnedGames(email, password, GetGameID(game.ID)).Result;
 				password.Dispose();
@@ -447,6 +449,7 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
 
 			return "";
 		}
@@ -465,71 +468,7 @@ namespace GameLauncher_Console
 			return key;
 		}
 
-		private static bool GetLogin(out string email, out SecureString password)
-		{
-			email = CConfig.GetConfigString(CConfig.CFG_ORIGINID);
-			password = new();
-			try
-			{
-				string encrypted = CConfig.GetConfigString(CConfig.CFG_ORIGINPW);
-				if (!string.IsNullOrEmpty(encrypted))
-				{
-					Span<byte> byteSpan = Convert.FromBase64String(encrypted);
-					if (OperatingSystem.IsWindows())
-					{
-						Array.ForEach(Encoding.UTF8.GetString(ProtectedData.Unprotect(byteSpan.ToArray(), null, DataProtectionScope.CurrentUser)).ToArray(), password.AppendChar);
-					}
-					else  // If we ever support other OSes, we will need to have a POSIX method to encrypt the password
-						Array.ForEach(Encoding.UTF8.GetString(byteSpan).ToArray(), password.AppendChar);
-					password.MakeReadOnly();
-				}
-
-				if (string.IsNullOrEmpty(email))
-				{
-					email = CDock.InputPrompt(_name + " e-mail >>> ", new());
-					CDock.ClearInputLine(new());
-				}
-
-				if (string.IsNullOrEmpty(email))
-					CConfig.SetConfigValue(CConfig.CFG_ORIGINID, "skipped");
-				else if (!email.Contains('@') || !email.Contains('.'))
-					CConfig.SetConfigValue(CConfig.CFG_ORIGINID, "invalid");
-				else
-				{
-					CConfig.SetConfigValue(CConfig.CFG_ORIGINID, email);
-
-					if (string.IsNullOrEmpty(encrypted))
-					{
-						string strPwd = CDock.InputPassword(_name + " password >>> ", new());
-						if (!string.IsNullOrEmpty(strPwd))
-						{
-							Span<byte> byteSpan = new();
-							if (OperatingSystem.IsWindows())
-								byteSpan = ProtectedData.Protect(Encoding.UTF8.GetBytes(strPwd), null, DataProtectionScope.CurrentUser);
-							else  // If we ever support other OSes, we will need to have a POSIX method to encrypt the password
-								byteSpan = Encoding.UTF8.GetBytes(strPwd);
-							password = new NetworkCredential("", strPwd).SecurePassword;
-							password.MakeReadOnly();
-							encrypted = Convert.ToBase64String(byteSpan);
-							CConfig.SetConfigValue(CConfig.CFG_ORIGINPW, encrypted);
-							byteSpan = null;
-						}
-						strPwd = null;
-						CDock.ClearInputLine(new());
-					}
-				}
-				encrypted = null;
-				if (!string.IsNullOrEmpty(email) && password.Length > 0)
-					return true;
-			}
-			catch (Exception e)
-			{
-				CLogger.LogError(e);
-			}
-
-			return false;
-		}
-
+		/*
 		[SupportedOSPlatform("windows")]
 		private static string GetWMIValue(string property, string path)
 		{
@@ -636,7 +575,9 @@ namespace GameLauncher_Console
 			decryptedText = "";
             return false;
 		}
+		*/
 
+		/*
 		private static async Task<List<string[]>> GetOwnedGames(string email, SecureString password, string id = "")
 		{
 			List<string[]> games = new();
@@ -666,7 +607,7 @@ namespace GameLauncher_Console
 						locale = originApi.InternalUser.Locale;         // "en_US"
 						if (string.IsNullOrEmpty(locale))
 							locale = EA_LANGDEF;
-
+		*/
 						/*
 						OriginUser user = await originApi.GetUserAsync(userid);
 						CLogger.LogDebug("persona: {0}, name: {1}, avatar: {2}", user.PersonaId.ToString(), user.Username, await user.GetAvatarUrlAsync());
@@ -686,6 +627,7 @@ namespace GameLauncher_Console
 							CLogger.LogDebug("  {0} 1 content:\n{1}", _name, content);
 						}
 						*/
+		/*
 #if DEBUG
 						// Don't re-download if file exists
 						string tmpfile = $"tmp_{_name}_api.xml";
@@ -724,7 +666,7 @@ namespace GameLauncher_Console
 
 				if (!success)
 					return new();
-
+		*/
 				/*
 				//rand.Next(1, 5);
 				HttpRequestMessage request3 = BaseAPIManager.CreateRequest(HttpMethod.Get, $"https://api1.origin.com/ecommerce2/entitlements/{userid}/associations/pending");
@@ -737,6 +679,7 @@ namespace GameLauncher_Console
 					CLogger.LogDebug("  {0} 3 content:\n{1}", _name, content3);
 				}
 				*/
+		/*
 
 				XmlNodeList gameList = doc.DocumentElement.SelectNodes("/entitlements/entitlement");
 				if (gameList == null || gameList.Count <= 0)
@@ -756,12 +699,13 @@ namespace GameLauncher_Console
 					try
 					{
 						strID = game.SelectSingleNode("offerId").InnerText; // if found later, we'll use softwareId instead of offerId
+		*/
 						/*
 						// we're now looking for softwareId instead of offerId
 						if (!string.IsNullOrEmpty(id) && !strID.Equals(id))  // used when looking for a particular game ID
 							continue;
 						*/
-
+		/*
 						// skip DLCs
 						//if (!game.SelectSingleNode("originDisplayType").InnerText.Equals("Full Game"))	// DLCs will be "Expansion" or "Addon"
 						if (!game.SelectSingleNode("entitlementTag").InnerText.Equals("ORIGIN_DOWNLOAD"))   // DLCs will be XPACK{#}_ACCESS
@@ -840,7 +784,7 @@ namespace GameLauncher_Console
 								}
 							}
 						}
-
+		*/
 						/*
 						//rand.Next(1, 5);
 						HttpRequestMessage request5 = BaseAPIManager.CreateRequest(HttpMethod.Get, $"https://api4.origin.com/ecommerce2/offerUpdatedDate?offerIds={game}");
@@ -853,7 +797,7 @@ namespace GameLauncher_Console
 							//CLogger.LogDebug("  {0} 5 content:\n{1}", _name, content5);
 						}
 						*/
-
+		/*
                         //CLogger.LogDebug($"- id:{strID} | title:{strTitle} | lastRun:{lastRun}");
                         games.Add(new string[] { strID, strTitle, strDescription, lastRun, iconUrl });
 					}
@@ -862,7 +806,7 @@ namespace GameLauncher_Console
 						CLogger.LogError(e, string.Format("API error for {0} owned games.", _name.ToUpper()));
 					}
 				}
-
+		*/
 				/*
 				//rand.Next(1, 5);
 				string file = $"supercat-PCWIN_MAC-{country}-{locale}.json.gz";
@@ -879,12 +823,16 @@ namespace GameLauncher_Console
 					}
 				}
 				*/
+		/*
 
 				return games;
 			}
 
 			return new();
 		}
+		*/
+
+		/*
 #nullable enable
 		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
 		private static extern bool GetVolumeInformationW(
@@ -896,9 +844,11 @@ namespace GameLauncher_Console
 			out uint lpFileSystemFlags,
             StringBuilder? lpFileSystemNameBuffer,
             int nFileSystemNameSize);
+		*/
     }
 #nullable restore
 
+	/*
 	public class OriginResponse
 	{
 		public class Entitlement
@@ -919,4 +869,5 @@ namespace GameLauncher_Console
 			public List<OriginEntitlement> entitlements;
 		}
 	}
+	*/
 }
