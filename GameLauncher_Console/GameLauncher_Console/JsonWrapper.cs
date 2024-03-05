@@ -1165,6 +1165,7 @@ namespace GameLauncher_Console
 		private static void SetTextDefaults(bool force)
 		{
 			SetDefaultVal(CConfig.CFG_PATHLEG, force);
+			SetDefaultVal(CConfig.CFG_STEAMAPI, force);
 			SetDefaultVal(CConfig.CFG_OCULUSID, force);
 			SetDefaultVal(CConfig.CFG_ORIGINID, force);
 			SetDefaultVal(CConfig.CFG_ORIGINPW, force);
