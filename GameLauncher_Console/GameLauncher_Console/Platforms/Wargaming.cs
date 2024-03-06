@@ -61,7 +61,7 @@ namespace GameLauncher_Console
 			string strPlatform = GetPlatformString(ENUM);
 
 			WargamingNetHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
-			foreach (var game in handler.FindAllGames())
+			foreach (var game in handler.FindAllGames(baseOnly: true))
 			{
 				if (game.IsT0)
 				{

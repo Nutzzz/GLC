@@ -58,15 +58,12 @@ namespace GameLauncher_Console
             string strPlatform = GetPlatformString(ENUM);
 
             RobotCacheHandler handler = new(FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
+            foreach (var game in handler.FindAllGames(baseOnly: true))
             {
                 if (game.IsT0)
                 {
-                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
-                    {
-                        CLogger.LogDebug("* " + game.AsT0.GameName);
-                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
-                    }
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);
