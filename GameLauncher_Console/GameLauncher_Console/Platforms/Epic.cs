@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.EGS;
+using GameCollector.StoreHandlers.EGS;
 using Logger;
 using System;
 using System.Buffers;
@@ -14,6 +14,7 @@ using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static System.Environment;
 using FileSystem = NexusMods.Paths.FileSystem;
+using GameFinder.Common;
 
 namespace GameLauncher_Console
 {
@@ -209,20 +210,17 @@ namespace GameLauncher_Console
         }
 
         [SupportedOSPlatform("windows")]
-        public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+        public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
-            EGSHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
-            foreach (var game in handler.FindAllGames())
+			EGSHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {
-                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
-                    {
-                        CLogger.LogDebug("* " + game.AsT0.GameName);
-                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
-                    }
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);

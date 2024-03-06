@@ -1,5 +1,5 @@
 ﻿using GameFinder.RegistryUtils;
-using GameFinder.StoreHandlers.Steam;
+using GameCollector.StoreHandlers.Steam;
 using HtmlAgilityPack;
 using Logger;
 using System;
@@ -14,6 +14,7 @@ using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using FileSystem = NexusMods.Paths.FileSystem;
 using System.Security;
+using GameFinder.Common;
 
 namespace GameLauncher_Console
 {
@@ -78,22 +79,19 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
             _ = CDock.GetLogin(_name + " API key <steamcommunity.com/dev/apikey>", CConfig.CFG_STEAMAPI, out string? apiKey, false) && (!apiKey.Equals("skipped"));
 
             SteamHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared, apiKey);
-            foreach (var game in handler.FindAllGames())
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {
-                    if (string.IsNullOrEmpty(game.AsT0.BaseGame))
-                    {
-                        CLogger.LogDebug("* " + game.AsT0.GameName);
-                        gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
-                    }
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
                 }
                 else
                     CLogger.LogWarn(game.AsT1.Message);
