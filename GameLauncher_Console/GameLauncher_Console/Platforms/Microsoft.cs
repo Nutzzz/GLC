@@ -1,34 +1,12 @@
-﻿//using HtmlAgilityPack;
+﻿using GameCollector.StoreHandlers.Xbox;
+using GameFinder.Common;
 using Logger;
-//using Microsoft.Web.WebView2;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-//using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.Versioning;
-/*
-using System.Management.Automation;		// PowerShell Reference Assemblies
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-*/
-using System.Xml;
-/*
-//using Windows.Management.Deployment;	// PackageManager [won't work unless this is a UWP or MSIX-packaged app?]
-using XboxWebApi.Authentication;
-using XboxWebApi.Authentication.Model;
-*/
 using static GameLauncher_Console.CGameData;
-//using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
-//using static GameLauncher_Console.CWebStuff;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -69,7 +47,7 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		public static int InstallGame(CGame game)
 		{
-			//CDock.DeleteCustomImage(game.Title, false);
+			//CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			return -1;
 		}
@@ -82,12 +60,24 @@ namespace GameLauncher_Console
 			else
 				Process.Start(game.Launch);
 		}
-
-		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+        [SupportedOSPlatform("windows")]
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
 
+            XboxHandler handler = new(FileSystem.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
 			// Registry + URI method
 			List<RegistryKey> appList = new();
 
@@ -304,6 +294,7 @@ namespace GameLauncher_Console
 					gameDataList.Add(new ImportGameData(strID, strTitle, strLaunch, strIconPath, null, strAlias, true, strPlatform));
 				}
 			}
+			*/
 
 			// TODO?: PowerShell Reference Assemblies method
 			/*

@@ -164,6 +164,7 @@ namespace GameLauncher_Console
 		/// </summary>
 		public enum DockSelection
 		{
+			cSel_downloadAll = -26,
 			cSel_Tags = -25,
 			cSel_raiseRating = -24,
 			cSel_lowerRating = -23,
@@ -269,14 +270,14 @@ namespace GameLauncher_Console
 			{
 				if (m_ConsoleState == ConsoleState.cState_Insert)
 				{
-					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, true, false, ref game, options.ToArray());
+					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, setup: true, browse: false, ref game, options.ToArray());
 					if (code > -1)
 						CDock.m_nCurrentSelection = code;
 					CLogger.LogDebug("HandleInsertMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 				}
 				else //if (m_ConsoleState == ConsoleState.cState_Navigate)
 				{
-					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, true, false, ref game, options.ToArray());
+					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, setup: true, browse: false, ref game, options.ToArray());
 					CLogger.LogDebug("HandleNavigationMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 					if (options.Count < 2)
 						CDock.m_nCurrentSelection = -1;
@@ -412,14 +413,14 @@ namespace GameLauncher_Console
 			{
 				if (m_ConsoleState == ConsoleState.cState_Insert)
 				{
-					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, false, true, ref game, options.ToArray());
+					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, setup: false, browse: true, ref game, options.ToArray());
 					if (code > -1)
 						CDock.m_nCurrentSelection = code;
 					CLogger.LogDebug("HandleInsertMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 				}
 				else //if (m_ConsoleState == ConsoleState.cState_Navigate)
 				{
-					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, false, true, ref game, options.ToArray());
+					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, setup: false, browse: true, ref game, options.ToArray());
 					CLogger.LogDebug("HandleNavigationMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 					if (options.Count < 2)
 						CDock.m_nCurrentSelection = -1;
@@ -501,8 +502,8 @@ namespace GameLauncher_Console
 				Console.Clear();
 
 			DrawMenuTitle(cols);
-			if (IsSelectionValid(CDock.m_nSelectedPlatform, options.Length)) DrawInstruct(cols, true);
-			else DrawInstruct(cols, false);
+			if (IsSelectionValid(CDock.m_nSelectedPlatform, options.Length)) DrawInstruct(cols, subMenu: true);
+			else DrawInstruct(cols, subMenu: false);
 			int nStartY = Console.CursorTop + CDock.INSTRUCT_CUSHION;
 			int nStopY = CDock.INPUT_BOTTOM_CUSHION + CDock.INPUT_ITEM_CUSHION;
 
@@ -510,12 +511,12 @@ namespace GameLauncher_Console
 			{
 				if (m_ConsoleState == ConsoleState.cState_Insert)
 				{
-					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, false, false, ref game, options);
+					code = HandleInsertMenu(nStartY, nStopY, cfgv, cols, setup: false, browse: false, ref game, options);
 					CLogger.LogDebug("HandleInsertMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 				}
 				else //if (m_ConsoleState == ConsoleState.cState_Navigate)
 				{
-					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, false, false, ref game, options);
+					code = HandleNavigationMenu(nStartY, nStopY, cfgv, keys, cols, setup: false, browse: false, ref game, options);
 					CLogger.LogDebug("HandleNavigationMenu:{0},{1}", code, CDock.m_nCurrentSelection);
 				}
 				if (code == (int)DockSelection.cSel_Exit ||
@@ -666,10 +667,10 @@ namespace GameLauncher_Console
 							{
 								CGame selectedGame = GetPlatformGame((GamePlatform)CDock.m_nSelectedPlatform, CDock.m_nCurrentSelection);
 								if (selectedGame != null)
-									CConsoleImage.ShowImage(CDock.m_nCurrentSelection, selectedGame.Title, selectedGame.Icon, false, CDock.sizeImage, CDock.locImage, imageColour);
+									CConsoleImage.ShowImage(CDock.m_nCurrentSelection, selectedGame.Title, selectedGame.Icon, bPlatform: false, CDock.sizeImage, CDock.locImage, imageColour);
 							}
 							else
-								CConsoleImage.ShowImage(CDock.m_nCurrentSelection, options[CDock.m_nCurrentSelection], options[CDock.m_nCurrentSelection], true, CDock.sizeImage, CDock.locImage, imageColour);
+								CConsoleImage.ShowImage(CDock.m_nCurrentSelection, options[CDock.m_nCurrentSelection], options[CDock.m_nCurrentSelection], bPlatform: true, CDock.sizeImage, CDock.locImage, imageColour);
 						}
 					});
 				}
@@ -841,6 +842,9 @@ namespace GameLauncher_Console
 				else if (key == keys.scanCK1 || key == keys.scanCK2)
 					return (int)DockSelection.cSel_Rescan; // Rescan the registry and the 'CustomGames' folder for new games
 
+				else if (key == keys.allimgCK1 || key == keys.allimgCK2)
+					return (int)DockSelection.cSel_downloadAll; // Rescan the registry and the 'CustomGames' folder for new games
+
 			} while (key != keys.selectCK1 && key != keys.selectCK2);
 			
 			return (int)DockSelection.cSel_Default;
@@ -963,6 +967,9 @@ namespace GameLauncher_Console
 				else if (strInput.Equals("/icon", CDock.IGNORE_CASE))
 					return (int)DockSelection.cSel_Image;
 
+				else if (strInput.Equals("/allicon", CDock.IGNORE_CASE))
+					return (int)DockSelection.cSel_downloadAll;
+
 				else if (strInput.Equals("/sort", CDock.IGNORE_CASE))
 					return (int)DockSelection.cSel_Sort;
 
@@ -1082,10 +1089,10 @@ namespace GameLauncher_Console
 				if (CDock.m_nSelectedPlatform > -1)
 				{
 					CGame selectedGame = GetPlatformGame((GamePlatform)CDock.m_nSelectedPlatform, nItem);
-					CConsoleImage.ShowImage(CDock.m_nCurrentSelection, selectedGame.Title, selectedGame.Icon, false, CDock.sizeIcon, iconPosition, iconColour);
+					CConsoleImage.ShowImage(CDock.m_nCurrentSelection, selectedGame.Title, selectedGame.Icon, bPlatform: false, CDock.sizeIcon, iconPosition, iconColour);
 				}
 				else
-					CConsoleImage.ShowImage(CDock.m_nCurrentSelection, strItem, strItem, true, CDock.sizeIcon, iconPosition, iconColour);
+					CConsoleImage.ShowImage(CDock.m_nCurrentSelection, strItem, strItem, bPlatform: true, CDock.sizeIcon, iconPosition, iconColour);
 			});
 		}
 
@@ -1440,7 +1447,7 @@ namespace GameLauncher_Console
 				// save it
 				IPersistFile file = (IPersistFile)link;
 				if (Directory.Exists(location))
-					file.Save(Path.Combine(location, title + ".LNK"), false);
+					file.Save(Path.Combine(location, title + ".LNK"), fRemember: false);
 			}
             catch (Exception e)
 			{

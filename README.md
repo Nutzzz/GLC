@@ -16,6 +16,7 @@ This is a simple Windows console program that will scan the system for video gam
 - Paradox Launcher;
 - Plarium Play;
 - Riot Client;
+- RobotCache;
 - Rockstar Games Launcher;
 - Steam;
 - Ubisoft Connect [formerly Uplay];

@@ -1,16 +1,19 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.GameJolt;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Versioning;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -36,8 +39,8 @@ namespace GameLauncher_Console
 		{
             if (OperatingSystem.IsWindows())
             {
-                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
-                    RegistryView.Registry64).OpenSubKey(Path.Combine(UNINSTALL_REG, GAMEJOLT_REG), RegistryKeyPermissionCheck.ReadSubTree); // HKCU64
+                using RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser,
+                    Microsoft.Win32.RegistryView.Registry64).OpenSubKey(Path.Combine(UNINSTALL_REG, GAMEJOLT_REG), RegistryKeyPermissionCheck.ReadSubTree); // HKCU64
                 if (key == null)
                 {
                     CLogger.LogInfo("{0} client not found in the registry.", _name.ToUpper());
@@ -79,10 +82,23 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
+            GameJoltHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
             using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
                 RegistryView.Registry64).OpenSubKey(Path.Combine(UNINSTALL_REG, GAMEJOLT_REG), RegistryKeyPermissionCheck.ReadSubTree); // HKCU64
             if (key == null)
@@ -159,16 +175,19 @@ namespace GameLauncher_Console
                                 new ImportGameData("gamejolt_" + strID, strTitle, strLaunch, strLaunch, "", strAlias, true, strPlatform));
 
                             // Use website to download missing icons
+            */
                             /*
                             objProps.TryGetProperty("thumbnail_media_item", out JsonElement thumb);
                             string imgUrl = GetStringProperty(thumb, "img_url");
                             if (!string.IsNullOrEmpty(imgUrl))
                                 CDock.DownloadCustomImage(strTitle, imgUrl);
                             */
+            /*
                         }
                     }
                 }
             }
+            */
 
 			CLogger.LogDebug("------------------------");
 		}

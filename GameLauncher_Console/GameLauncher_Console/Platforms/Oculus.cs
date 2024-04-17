@@ -1,22 +1,18 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameCollector.StoreHandlers.Oculus;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
 using System.Runtime.Versioning;
 using System.ServiceProcess;
 using System.Text;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -54,7 +50,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
         {
-            //CDock.DeleteCustomImage(game.Title, false);
+            //CDock.DeleteCustomImage(game.Title, justBackups: false);
             Launch();
             return -1;
         }
@@ -69,18 +65,20 @@ namespace GameLauncher_Console
         }
 
         [SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
+            /*
             // Stop service (otherwise database is locked)
+            
             ServiceController sc = new("OVRService");
-            //bool restartSvc = false;
+            bool restartSvc = false;
             try
             {
                 if (sc.Status.Equals(ServiceControllerStatus.Running) || sc.Status.Equals(ServiceControllerStatus.StartPending))
                 {
-                    //restartSvc = true;
+                    restartSvc = true;
                     sc.Stop();
                     sc.WaitForStatus(ServiceControllerStatus.Stopped);
                 }
@@ -89,7 +87,21 @@ namespace GameLauncher_Console
             {
                 CLogger.LogError(e);
             }
+            */
 
+            OculusHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
 			List<string> libPaths = new();
 			Dictionary<ulong, string> exePaths = new();
 			string db = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), OCULUS_DB);
@@ -162,35 +174,37 @@ namespace GameLauncher_Console
 
 				using SQLiteConnection con = new($"Data Source={db}");
                 con.Open();
+            */
 
-                // Get the user ID to check entitlements for expired trials
-                /*
-				using (SQLiteCommand cmdU = new("SELECT hashkey, value FROM Objects WHERE typename = 'User'", con))
-				{
-					using SQLiteDataReader rdrU = cmdU.ExecuteReader();
-					while (rdrU.Read())
-					{
-						byte[] valU = new byte[rdrU.GetBytes(1, 0, null, 0, int.MaxValue) - 1];
-						rdrU.GetBytes(1, 0, valU, 0, valU.Length);
-						string strValU = Encoding.Default.GetString(valU);
+            // Get the user ID to check entitlements for expired trials
+            /*
+            using (SQLiteCommand cmdU = new("SELECT hashkey, value FROM Objects WHERE typename = 'User'", con))
+            {
+                using SQLiteDataReader rdrU = cmdU.ExecuteReader();
+                while (rdrU.Read())
+                {
+                    byte[] valU = new byte[rdrU.GetBytes(1, 0, null, 0, int.MaxValue) - 1];
+                    rdrU.GetBytes(1, 0, valU, 0, valU.Length);
+                    string strValU = Encoding.Default.GetString(valU);
 
-						string alias = ParseBlob(strValU, "alias", "app_entitlements");
-						if (string.IsNullOrEmpty(userName) || userName.Equals("skipped"))
-						{
-							if (ulong.TryParse(rdrU.GetString(0), out userId))
-							{
-								userName = alias;
-								break;
-							}
-						}
-						else if (userName.Equals(alias, CDock.IGNORE_CASE))
+                    string alias = ParseBlob(strValU, "alias", "app_entitlements");
+                    if (string.IsNullOrEmpty(userName) || userName.Equals("skipped"))
+                    {
+                        if (ulong.TryParse(rdrU.GetString(0), out userId))
                         {
-							ulong.TryParse(rdrU.GetString(0), out userId);
-							break;
+                            userName = alias;
+                            break;
                         }
-					}
-				}
-                */
+                    }
+                    else if (userName.Equals(alias, CDock.IGNORE_CASE))
+                    {
+                        ulong.TryParse(rdrU.GetString(0), out userId);
+                        break;
+                    }
+                }
+            }
+            */
+            /*
 
                 using SQLiteCommand cmd = new("SELECT hashkey, value FROM Objects WHERE typename = 'Application'", con);
                 using SQLiteDataReader rdr = cmd.ExecuteReader();
@@ -204,11 +218,13 @@ namespace GameLauncher_Console
                     string strAlias = "";
 
                     string url = "";
-                    /*
-                    string exePath = "", exePath2d = "", exeParams = "", exeParams2d = "";
-                    string state = "", time = "";
-                    bool isInstalled = false;
-                    */
+            */
+            /*
+            string exePath = "", exePath2d = "", exeParams = "", exeParams2d = "";
+            string state = "", time = "";
+            bool isInstalled = false;
+            */
+            /*
                     bool isInstalled = true;
 
                     if (ulong.TryParse(rdr.GetString(0), out ulong id))
@@ -229,18 +245,19 @@ namespace GameLauncher_Console
                     strTitle = ParseBlob(strVal, "display_name", "display_short_description");
                     if (!string.IsNullOrEmpty(name) && string.IsNullOrEmpty(strTitle))
                         strTitle = ti.ToTitleCase(name.Replace('-', ' '));
+            */
 
-                    //TODO: metadata
-                    /*
-                    strDescription = ParseBlob(strVal, "display_short_description", "genres");
-                    string strGenres = ParseBlob(strVal, "genres", "grouping", 1);
-                    string[] genreArray = strGenres.Split('\0', StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string genre in genreArray)
-                    {
-                        genres.Add(genre[0..^1]);
-                    }
-                    */
-
+            //TODO: metadata
+            /*
+            strDescription = ParseBlob(strVal, "display_short_description", "genres");
+            string strGenres = ParseBlob(strVal, "genres", "grouping", 1);
+            string[] genreArray = strGenres.Split('\0', StringSplitOptions.RemoveEmptyEntries);
+            foreach (string genre in genreArray)
+            {
+                genres.Add(genre[0..^1]);
+            }
+            */
+            /*
                     using (SQLiteCommand cmd2 = new($"SELECT value FROM Objects WHERE hashkey = '{assets}'", con))
                     {
                         using SQLiteDataReader rdr2 = cmd2.ExecuteReader();
@@ -252,49 +269,50 @@ namespace GameLauncher_Console
                             url = ParseBlob(strVal2, "uri", "version_code", strStart1: "size");
                         }
                     }
+            */
+            // The exe's can be gotten from the .json files, which we have to get anyway to figure out the install path
+            /*
+            using (SQLiteCommand cmd3 = new($"SELECT value FROM Objects WHERE hashkey = '{bin}'", con))
+            {
+                using SQLiteDataReader rdr3 = cmd3.ExecuteReader();
+                while (rdr3.Read())
+                {
+                    byte[] val3 = new byte[rdr3.GetBytes(0, 0, null, 0, int.MaxValue) - 1];
+                    rdr3.GetBytes(0, 0, val3, 0, val3.Length);
+                    string strVal3 = Encoding.Default.GetString(val3);
+                    exePath = ParseBlob(strVal3, "launch_file", "launch_file_2d");
+                    exePath2d = ParseBlob(strVal3, "launch_file_2d", "launch_parameters");
+                    exeParams = ParseBlob(strVal3, "launch_parameters", "launch_parameters_2d");
+                    exeParams2d = ParseBlob(strVal3, "launch_parameters_2d", "manifest_signature");
+                }
+            }
 
-                    // The exe's can be gotten from the .json files, which we have to get anyway to figure out the install path
-                    /*
-                    using (SQLiteCommand cmd3 = new($"SELECT value FROM Objects WHERE hashkey = '{bin}'", con))
-                    {
-                        using SQLiteDataReader rdr3 = cmd3.ExecuteReader();
-                        while (rdr3.Read())
-                        {
-                            byte[] val3 = new byte[rdr3.GetBytes(0, 0, null, 0, int.MaxValue) - 1];
-                            rdr3.GetBytes(0, 0, val3, 0, val3.Length);
-                            string strVal3 = Encoding.Default.GetString(val3);
-                            exePath = ParseBlob(strVal3, "launch_file", "launch_file_2d");
-                            exePath2d = ParseBlob(strVal3, "launch_file_2d", "launch_parameters");
-                            exeParams = ParseBlob(strVal3, "launch_parameters", "launch_parameters_2d");
-                            exeParams2d = ParseBlob(strVal3, "launch_parameters_2d", "manifest_signature");
-                        }
-                    }
-
-                    if (userId > 0)
-                    {
-                        // TODO: If this is an expired trial, count it as not-installed
-                        using SQLiteCommand cmd5 = new($"SELECT value FROM Objects WHERE hashkey = '{userId}:{id}'", con);
-                        using SQLiteDataReader rdr5 = cmd5.ExecuteReader();
-                        while (rdr5.Read())
-                        {
-                            byte[] val5 = new byte[rdr5.GetBytes(0, 0, null, 0, int.MaxValue) - 1];
-                            rdr5.GetBytes(0, 0, val5, 0, val5.Length);
-                            string strVal5 = Encoding.Default.GetString(val5);
-                            state = ParseBlob(strVal5, "active_state", "expiration_time");
-                            if (state.Equals("PERMANENT"))
-                                isInstalled = true;
-                            else
-                            {
-                                time = ParseBlob(strVal5, "expiration_time", "grant_reason");
-                                CLogger.LogDebug($"expiry: {state} {time}");
-                                //if (!...expired)
-                                isInstalled = true;
-                            }
-                        }
-                    }
-                    else
+            if (userId > 0)
+            {
+                // TODO: If this is an expired trial, count it as not-installed
+                using SQLiteCommand cmd5 = new($"SELECT value FROM Objects WHERE hashkey = '{userId}:{id}'", con);
+                using SQLiteDataReader rdr5 = cmd5.ExecuteReader();
+                while (rdr5.Read())
+                {
+                    byte[] val5 = new byte[rdr5.GetBytes(0, 0, null, 0, int.MaxValue) - 1];
+                    rdr5.GetBytes(0, 0, val5, 0, val5.Length);
+                    string strVal5 = Encoding.Default.GetString(val5);
+                    state = ParseBlob(strVal5, "active_state", "expiration_time");
+                    if (state.Equals("PERMANENT"))
                         isInstalled = true;
-                    */
+                    else
+                    {
+                        time = ParseBlob(strVal5, "expiration_time", "grant_reason");
+                        CLogger.LogDebug($"expiry: {state} {time}");
+                        //if (!...expired)
+                        isInstalled = true;
+                    }
+                }
+            }
+            else
+                isInstalled = true;
+            */
+            /*
 
                     if (exePaths.ContainsKey(id))
                     {
@@ -311,65 +329,66 @@ namespace GameLauncher_Console
                     {
                         CLogger.LogDebug($"- *{strTitle}");
                         gameDataList.Add(new ImportGameData(strID, strTitle, "", "", "", "", false, strPlatform));
+            */
+            /*
+            if (expensiveIcons && !string.IsNullOrEmpty(url))
+            {
+                // Download missing icons
+                // Downloading zip doesn't work anymore; now gives 403 error
 
-                        /*
-                        if (expensiveIcons && !string.IsNullOrEmpty(url))
+                string imgfile = Path.Combine(CDock.currentPath, CDock.IMAGE_FOLDER_NAME,
+                    string.Concat(strTitle.Split(Path.GetInvalidFileNameChars())));
+                bool iconFound = false;
+                foreach (string ext in CDock.supportedImages)
+                {
+                    if (File.Exists(imgfile + "." + ext))
+                    {
+                        iconFound = true;
+                        break;
+                    }
+                }
+                if (iconFound)
+                    continue;
+
+                string zipfile = $"tmp_{_name}_{id}.zip";
+                try
+                {
+#if DEBUG
+                    // Don't re-download if file exists
+                    if (!File.Exists(zipfile))
+                    {
+#endif
+                        using WebClient client = new();
+                        client.DownloadFile(url, zipfile);
+#if DEBUG
+                    }
+#endif
+                    if (File.Exists(zipfile))
+                    {
+                        using ZipArchive archive = ZipFile.OpenRead(zipfile);
+                        foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            // Download missing icons
-                            // Downloading zip doesn't work anymore; now gives 403 error
-                            
-                            string imgfile = Path.Combine(CDock.currentPath, CDock.IMAGE_FOLDER_NAME,
-                                string.Concat(strTitle.Split(Path.GetInvalidFileNameChars())));
-                            bool iconFound = false;
                             foreach (string ext in CDock.supportedImages)
                             {
-                                if (File.Exists(imgfile + "." + ext))
+                                if (entry.Name.Equals("cover_square_image." + ext, CDock.IGNORE_CASE))
                                 {
-                                    iconFound = true;
+                                    entry.ExtractToFile(imgfile + "." + ext, true);
                                     break;
                                 }
                             }
-                            if (iconFound)
-                                continue;
-
-                            string zipfile = $"tmp_{_name}_{id}.zip";
-                            try
-                            {
-#if DEBUG
-                                // Don't re-download if file exists
-                                if (!File.Exists(zipfile))
-                                {
-#endif
-                                    using WebClient client = new();
-                                    client.DownloadFile(url, zipfile);
-#if DEBUG
-                                }
-#endif
-                                if (File.Exists(zipfile))
-                                {
-                                    using ZipArchive archive = ZipFile.OpenRead(zipfile);
-                                    foreach (ZipArchiveEntry entry in archive.Entries)
-                                    {
-                                        foreach (string ext in CDock.supportedImages)
-                                        {
-                                            if (entry.Name.Equals("cover_square_image." + ext, CDock.IGNORE_CASE))
-                                            {
-                                                entry.ExtractToFile(imgfile + "." + ext, true);
-                                                break;
-                                            }
-                                        }
-                                    }
-#if !DEBUG
-                                    File.Delete(zipfile);
-#endif
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                CLogger.LogError(e, string.Format("Malformed {0} zip file!", _name.ToUpper()));
-                            }
                         }
-                        */
+#if !DEBUG
+                        File.Delete(zipfile);
+#endif
+                    }
+                }
+                catch (Exception e)
+                {
+                    CLogger.LogError(e, string.Format("Malformed {0} zip file!", _name.ToUpper()));
+                }
+            }
+            */
+            /*
                     }
                 }
                 con.Close();
@@ -378,6 +397,8 @@ namespace GameLauncher_Console
 			{
                 CLogger.LogError(e, string.Format("Malformed {0} database output!", _name.ToUpper()));
             }
+            */
+
             //if (restartSvc)
             //    sc.Start();
 

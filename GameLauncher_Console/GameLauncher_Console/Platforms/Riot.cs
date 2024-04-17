@@ -1,14 +1,13 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Riot;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.Versioning;
-using System.Text.Json;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CGameFinder;
-using static GameLauncher_Console.CJsonWrapper;
-using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -45,7 +44,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			//CDock.DeleteCustomImage(game.Title, false);
+			//CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
 			return -1;
 		}
@@ -60,9 +59,23 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
+
+            RiotHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
 			string dataPath = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), RIOT_FOLDER);
 
 			try
@@ -137,6 +150,8 @@ namespace GameLauncher_Console
 			{
 				CLogger.LogError(e);
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 

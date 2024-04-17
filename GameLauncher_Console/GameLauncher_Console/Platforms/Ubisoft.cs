@@ -1,12 +1,13 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameCollector.StoreHandlers.Ubisoft;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.Versioning;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CRegScanner;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -46,7 +47,7 @@ namespace GameLauncher_Console
 			// Some games don't provide a valid ID
 			if (game.ID.StartsWith(UPLAY_PREFIX))
 			{
-				//CDock.DeleteCustomImage(game.Title, false);
+				//CDock.DeleteCustomImage(game.Title, justBackups: false);
 				if (OperatingSystem.IsWindows())
 					CDock.StartShellExecute(START_GAME + GetGameID(game.ID));
 				else
@@ -67,13 +68,30 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
-			List<RegistryKey> keyList;
+			string strPlatform = GetPlatformString(ENUM);
+
+			UbisoftHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+			foreach (var game in handler.FindAllGames(settings))
+			{
+				if (game.IsT0)
+				{
+					if (string.IsNullOrEmpty(game.AsT0.BaseGame))
+					{
+						CLogger.LogDebug("* " + game.AsT0.GameName);
+						gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+					}
+				}
+				else
+					CLogger.LogWarn(game.AsT1.Message);
+			}
+
+			/*
+            List<RegistryKey> keyList;
 			List<string> uplayIds = new();
 			List<string> uplayIcons = new();
 			string launcherPath = "";
-			string strPlatform = GetPlatformString(ENUM);
 
 			using (RegistryKey launcherKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
                 RegistryView.Registry32).OpenSubKey(Path.Combine(UNINSTALL_REG, UPLAY_UNREG), RegistryKeyPermissionCheck.ReadSubTree)) // HKLM32
@@ -224,6 +242,8 @@ namespace GameLauncher_Console
 					CLogger.LogError(e, string.Format("Malformed {0} file: {1}", _name.ToUpper(), uplayCfgFile));
 				}
 			}
+			*/
+
 			CLogger.LogDebug("-----------------------");
 		}
 

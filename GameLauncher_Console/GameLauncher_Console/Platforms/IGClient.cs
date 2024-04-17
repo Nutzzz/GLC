@@ -1,14 +1,19 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.IGClient;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text.Json;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -35,8 +40,8 @@ namespace GameLauncher_Console
 		{
 			if (OperatingSystem.IsWindows())
 			{
-                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-                    RegistryView.Registry64).OpenSubKey(IG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
+                using RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine,
+                    Microsoft.Win32.RegistryView.Registry64).OpenSubKey(IG_REG, RegistryKeyPermissionCheck.ReadSubTree); // HKLM64
                 Process igcProcess = new();
                 string launcherPath = Path.Combine(GetRegStrVal(key, GAME_INSTALL_LOCATION), "IGClient.exe");
                 if (File.Exists(launcherPath))
@@ -57,7 +62,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
 			Launch();
             return -1;
 		}
@@ -71,10 +76,25 @@ namespace GameLauncher_Console
                 Process.Start(game.Launch);
         }
 
-        public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
-		{
-			List<string> igcIds = new();
+        //[SupportedOSPlatform("windows")]
+        public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
+        {
             string strPlatform = GetPlatformString(ENUM);
+
+            IGClientHandler handler = new(FileSystem.Shared, null); // WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
+            List<string> igcIds = new();
 
             // Get installed games
             string file = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), IG_JSON);
@@ -203,10 +223,12 @@ namespace GameLauncher_Console
                                             if (!(bool)(CConfig.GetConfigBool(CConfig.CFG_IMGDOWN)))
                                             {
                                                 string devName = GetStringProperty(prod, "prod_dev_namespace");
+            */
                                                 /*
                                                 string cover = GetStringProperty(prod, "prod_dev_cover");
                                                 string iconWideUrl = $"https://www.indiegalacdn.com/imgs/devs/{devName}/products/{strID}/prodcover/{cover}";
                                                 */
+            /*
                                                 string image = GetStringProperty(prod, "prod_dev_image");
                                                 if (!string.IsNullOrEmpty(devName) && !string.IsNullOrEmpty(image))
                                                 {
@@ -226,6 +248,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+            */
+
 			CLogger.LogDebug("--------------------");
 		}
 

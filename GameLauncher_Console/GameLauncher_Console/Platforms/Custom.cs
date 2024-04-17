@@ -1,4 +1,5 @@
-﻿using Logger;
+﻿using GameFinder.Common;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,7 +44,7 @@ namespace GameLauncher_Console
 				_ = Process.Start(game.Launch);
 		}
 
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false) => throw new NotImplementedException();
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false) => throw new NotImplementedException();
 
 		public void GetGames(ref CTempGameSet tempGameSet)
         {
@@ -63,9 +64,10 @@ namespace GameLauncher_Console
 		[SupportedOSPlatform("windows")]
 		private static void FindCustomLinkFiles(ref CTempGameSet tempGameSet)
 		{
-			List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".lnk")).ToList();
+            string strPlatform = GetPlatformString(ENUM);
 
-			string strPlatform = GetPlatformString(ENUM);
+            List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".lnk")).ToList();
+			
 			foreach (string file in fileList)
 			{
 				string strPathOnly = Path.GetDirectoryName(file);
@@ -86,7 +88,7 @@ namespace GameLauncher_Console
 					string strAlias = GetAlias(strTitle);
 					if (strAlias.Equals(strTitle, CDock.IGNORE_CASE))
 						strAlias = "";
-					tempGameSet.InsertGame(strID, strTitle, strLaunch, strLaunch, strUninstall, true, false, true, false, strAlias, strPlatform, new List<string>(), DateTime.MinValue, 0, 0, 0f);
+					tempGameSet.InsertGame(strID, strTitle, strLaunch, "", strLaunch, "", strUninstall, bIsInstalled: true, bIsFavourite: false, bIsNew: true, bIsHidden: false, strAlias, strPlatform, new List<string>(), DateTime.MinValue, 0, 0, 0f);
 				}
 			}
 		}
@@ -97,6 +99,7 @@ namespace GameLauncher_Console
 		private static void FindCustomBinaries(ref CTempGameSet tempGameSet)
 		{
 			string strPlatform = GetPlatformString(ENUM);
+
 			List<string> fileList = Directory.EnumerateFiles(Path.Combine(CDock.currentPath, CUSTOM_GAME_FOLDER), "*", SearchOption.AllDirectories).Where(s => s.EndsWith(".exe")).ToList();
 
 			// Big Fish Games may use .bfg for executables
@@ -112,7 +115,7 @@ namespace GameLauncher_Console
 				string strAlias = GetAlias(strTitle);
 				if (strAlias.Equals(strTitle, CDock.IGNORE_CASE))
 					strAlias = "";
-				tempGameSet.InsertGame(strID, strTitle, strLaunch, strLaunch, strUninstall, true, false, true, false, strAlias, strPlatform, new List<string>(), DateTime.MinValue, 0, 0, 0f);
+				tempGameSet.InsertGame(strID, strTitle, strLaunch, "", strLaunch, "", strUninstall, bIsInstalled: true, bIsFavourite: false, bIsNew: true, bIsHidden: false, strAlias, strPlatform, new List<string>(), DateTime.MinValue, 0, 0, 0f);
 			}
 		}
 	}

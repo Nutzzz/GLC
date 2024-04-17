@@ -1,4 +1,6 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Humble;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,8 @@ using static System.Environment;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
+using FileSystem = NexusMods.Paths.FileSystem;
+using GameFinder.Common;
 
 namespace GameLauncher_Console
 {
@@ -60,7 +64,7 @@ namespace GameLauncher_Console
 		// 1 = success
 		public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
             if (OperatingSystem.IsWindows())
             {
                 try
@@ -97,9 +101,23 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
-			string strPlatform = GetPlatformString(ENUM);
+            string strPlatform = GetPlatformString(ENUM);
+
+            HumbleHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+			/*
 			string configPath = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), HUMBLE_CONFIG); // AppData\Roaming
             if (File.Exists(configPath))
 			{
@@ -107,10 +125,12 @@ namespace GameLauncher_Console
 				if (!string.IsNullOrEmpty(strDocumentData))
 				{
 					using JsonDocument document = JsonDocument.Parse(@strDocumentData, jsonTrailingCommas);
+			*/
 					/*
                     document.RootElement.TryGetProperty("settings", out JsonElement settings);
 					string loc = GetStringProperty(settings, "downloadLocation");
 					*/
+			/*
 					document.RootElement.TryGetProperty("user", out JsonElement user);
 					bool bHasHgc = GetBoolProperty(user, "owns_active_content");
                     bool bIsPaused = GetBoolProperty(user, "is_paused");
@@ -191,6 +211,7 @@ namespace GameLauncher_Console
                             CLogger.LogDebug($"- *{strTitle}");
                             gameDataList.Add(
 								new ImportGameData(strID, strTitle, "", "", "", "", false, strPlatform));
+			*/
 
                             // Use website to download missing icons
                             // avif (AV1) won't be supported until we finish switch to a cross-platform graphics library
@@ -199,6 +220,7 @@ namespace GameLauncher_Console
                             if (!(string.IsNullOrEmpty(imgUrl) || (bool)(CConfig.GetConfigBool(CConfig.CFG_IMGDOWN))))
 								CDock.DownloadCustomImage(strTitle, imgUrl);
 							*/
+			/*
 						}
 						else // installed
 						{
@@ -228,6 +250,8 @@ namespace GameLauncher_Console
 					}
 				}
 			}
+			*/
+
 			CLogger.LogDebug("------------------------");
 		}
 

@@ -1,15 +1,18 @@
-﻿using Logger;
+﻿using GameCollector.StoreHandlers.Itch;
+using GameFinder.Common;
+using GameFinder.RegistryUtils;
+using Logger;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
-using System.Text.Json;
+using System.Runtime.Versioning;
 using static GameLauncher_Console.CGameData;
-using static GameLauncher_Console.CJsonWrapper;
 using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
 
 namespace GameLauncher_Console
 {
@@ -66,7 +69,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
 			if (OperatingSystem.IsWindows())
 			{
 				try
@@ -102,10 +105,24 @@ namespace GameLauncher_Console
                 Process.Start(game.Launch);
         }
 
-        public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
-		{
+        //[SupportedOSPlatform("windows")]
+        public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
+        {
             string strPlatform = GetPlatformString(ENUM);
 
+            ItchHandler handler = new(FileSystem.Shared, null); // WindowsRegistry.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+
+            /*
             // Get installed games
             string db = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), ITCH_DB);
 			if (!File.Exists(db))
@@ -212,6 +229,8 @@ namespace GameLauncher_Console
 			{
 				CLogger.LogError(e, string.Format("Malformed {0} database output!", _name.ToUpper()));
 			}
+            */
+
 			CLogger.LogDebug("-------------------");
 		}
 

@@ -1,5 +1,6 @@
-﻿using Logger;
-using Microsoft.Win32;
+﻿using GameFinder.RegistryUtils;
+using GameCollector.StoreHandlers.GOG;
+using Logger;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -10,8 +11,9 @@ using System.Text.Json;
 using System.Threading;
 using static GameLauncher_Console.CGameData;
 using static GameLauncher_Console.CJsonWrapper;
-using static GameLauncher_Console.CRegScanner;
 using static System.Environment;
+using FileSystem = NexusMods.Paths.FileSystem;
+using GameFinder.Common;
 
 namespace GameLauncher_Console
 {
@@ -71,7 +73,7 @@ namespace GameLauncher_Console
         // 1 = success
         public static int InstallGame(CGame game)
 		{
-			CDock.DeleteCustomImage(game.Title, false);
+			CDock.DeleteCustomImage(game.Title, justBackups: false);
             if (OperatingSystem.IsWindows())
                 _ = CDock.StartShellExecute(INSTALL_GAME + GetGameID(game.ID));
             else
@@ -112,10 +114,22 @@ namespace GameLauncher_Console
         }
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
+            GOGHandler handler = new(WindowsRegistry.Shared, FileSystem.Shared);
+            foreach (var game in handler.FindAllGames(settings))
+            {
+                if (game.IsT0)
+                {
+                    CLogger.LogDebug("* " + game.AsT0.GameName);
+                    gameDataList.Add(new ImportGameData(strPlatform, game.AsT0));
+                }
+                else
+                    CLogger.LogWarn(game.AsT1.Message);
+            }
+            
             /*
 			productId from ProductAuthorizations
 			productId, installationPath from InstalledBaseProducts
@@ -126,6 +140,7 @@ namespace GameLauncher_Console
             limitedDetailsId, releaseDate from Details
 			*/
 
+            /*
             // Get installed games
             string db = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData), GOG_DB);
 			if (!File.Exists(db))
@@ -271,7 +286,8 @@ namespace GameLauncher_Console
                                                     }
                                                 }
                                             }
-
+            
+             */
                                             // TODO: metadata release date
                                             // Details table only applies to installed GOG games
                                             /*
@@ -289,6 +305,7 @@ namespace GameLauncher_Console
                                                 }
                                             }
                                             */
+            /*
 
                                             gameDataList.Add(new ImportGameData(strID, strTitle, strLaunch, strIconPath, "", strAlias, true, strPlatform, bHidden:hidden, tags:tagList, dateLastRun:lastRun, rating:userRating));
                                         }
@@ -352,6 +369,8 @@ namespace GameLauncher_Console
 			{
 				CLogger.LogError(e, string.Format("Malformed {0} database output!", _name.ToUpper()));
 			}
+            */
+
 			CLogger.LogDebug("-------------------");
 		}
 

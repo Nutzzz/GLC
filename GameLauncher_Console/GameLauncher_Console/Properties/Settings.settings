@@ -125,6 +125,9 @@
     <Setting Name="num_steam_id" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="text_steam_apikey" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
+    </Setting>
     <Setting Name="text_oculus_username" Type="System.String" Scope="User">
       <Value Profile="(Default)"></Value>
     </Setting>

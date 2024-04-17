@@ -518,14 +518,14 @@ namespace SqlDB
             //while(-1 < vMask && vMask < whereCondition.Length)
             while(true)
             {
-                fMask = whereCondition.IndexOf(M_FIELD_MASK, fMask, false);
+                fMask = whereCondition.IndexOf(M_FIELD_MASK, fMask, ignoreCase: false);
                 if(fMask == -1)
                 {
                     break;
                 }
                 whereCondition.Replace(M_FIELD_MASK, m_sqlRow[columnIndex].Column, fMask, 1);
 
-                vMask = whereCondition.IndexOf(M_VALUE_MASK, fMask, false);
+                vMask = whereCondition.IndexOf(M_VALUE_MASK, fMask, ignoreCase: false);
                 if (vMask == -1)
                 {
                     break;
