@@ -1,4 +1,5 @@
 ﻿using GameCollector.StoreHandlers.Plarium;
+using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using Logger;
 using System;
@@ -59,12 +60,12 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
             PlariumHandler handler = new(FileSystem.Shared, WindowsRegistry.Shared);
-            foreach (var game in handler.FindAllGames(baseOnly: true))
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {

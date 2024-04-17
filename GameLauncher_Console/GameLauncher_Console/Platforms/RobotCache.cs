@@ -1,4 +1,5 @@
 ﻿using GameCollector.StoreHandlers.RobotCache;
+using GameFinder.Common;
 using Logger;
 using System;
 using System.Collections.Generic;
@@ -53,12 +54,12 @@ namespace GameLauncher_Console
 		}
 
 		[SupportedOSPlatform("windows")]
-		public void GetGames(List<ImportGameData> gameDataList, bool expensiveIcons = false)
+		public void GetGames(List<ImportGameData> gameDataList, Settings settings, bool expensiveIcons = false)
 		{
             string strPlatform = GetPlatformString(ENUM);
 
             RobotCacheHandler handler = new(FileSystem.Shared);
-            foreach (var game in handler.FindAllGames(baseOnly: true))
+            foreach (var game in handler.FindAllGames(settings))
             {
                 if (game.IsT0)
                 {
