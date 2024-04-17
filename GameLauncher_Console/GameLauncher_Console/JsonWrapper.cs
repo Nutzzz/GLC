@@ -1008,6 +1008,7 @@ namespace GameLauncher_Console
 			SetDefaultVal(CConfig.CFG_USEALL, force);
 			SetDefaultVal(CConfig.CFG_NOCFG, force);
 			SetDefaultVal(CConfig.CFG_INSTONLY, force);
+			SetDefaultVal(CConfig.CFG_GAMEONLY, force);
 			SetDefaultVal(CConfig.CFG_USECUST, force);
 			SetDefaultVal(CConfig.CFG_USETEXT, force);
 			SetDefaultVal(CConfig.CFG_IMGBORD, force);

@@ -56,6 +56,9 @@
     <Setting Name="flag_do_not_scan_not_installed_games" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="flag_do_not_scan_nongame_software" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
     <Setting Name="flag_only_scan_custom_games" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

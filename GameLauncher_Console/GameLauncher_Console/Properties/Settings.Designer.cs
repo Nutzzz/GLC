@@ -241,6 +241,18 @@ namespace GameLauncher_Console.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool flag_do_not_scan_nongame_software {
+            get {
+                return ((bool)(this["flag_do_not_scan_nongame_software"]));
+            }
+            set {
+                this["flag_do_not_scan_nongame_software"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool flag_only_scan_custom_games {
             get {
@@ -383,6 +395,8 @@ namespace GameLauncher_Console.Properties {
             }
         }
         
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool flag_use_itch_launcher {
             get {

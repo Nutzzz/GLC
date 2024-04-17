@@ -229,11 +229,16 @@ namespace GameLauncher_Console
 			var cursor = Console.CursorLeft;
 			if (!bOnlyCustom)
 			{
+				if (!bool.TryParse(CConfig.CFG_GAMEONLY, out var gamesOnly))
+					gamesOnly = true;
+				if (!bool.TryParse(CConfig.CFG_INSTONLY, out var installedOnly))
+					installedOnly = false;
+
 				Settings settings = new()
 				{
 					BaseOnly = true,
-					GamesOnly = false,
-					InstalledOnly = false,
+					GamesOnly = gamesOnly,
+					InstalledOnly = installedOnly,
 					OwnedOnly = true,
 				};
 				foreach (IPlatform platform in _platforms)
