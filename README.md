@@ -65,10 +65,9 @@ Legendary is supported as an alternative to the Epic Games Launcher. [Download l
 ## Building from source
 After cloning the repo, use the Publish feature in Visual Studio (right-click the GameLauncher_Console project and choose Publish), or run: `dotnet publish --configuration Release`
 
-The program uses following NuGet packages:
-- [HtmlAgilityPack](https://html-agility-pack.net/) for HTML parsing (Steam non-installed games);
-- [protobuf-net](https://protobuf-net.github.io/protobuf-net/) for database parsing (Battle.net);
-- [PureOrigin.API](https://github.com/JaydenMaalouf/PureOrigin.API) for the EA API;
+The program uses some third-party NuGet packages, including:
+- [GameCollector](https://github.com/Nutzzz/GameCollector) to find the games;
+- [HtmlAgilityPack](https://html-agility-pack.net/) for HTML parsing (to download icons);
 - [System.Data.SQLite](https://system.data.sqlite.org/index.html/doc/trunk/www/index.wiki) for database parsing (v2 game database, Amazon, GOG, itch, Oculus).
 
 ## Contributing
