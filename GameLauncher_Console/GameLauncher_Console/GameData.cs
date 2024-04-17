@@ -132,53 +132,10 @@ namespace GameLauncher_Console
 		/// <summary>
 		/// Collect data from the registry or filesystem
 		/// </summary>
-		public struct ImportGameData
+		public struct ImportGameData(string strPlatform, GameData gameData)
 		{
-			public string m_strPlatform;
-			public GameData m_gameData;
-			/*
-			public string m_strID;
-			public string m_strTitle;
-			public string m_strLaunch;
-			public string m_strLaunchUrl;
-			public string m_strIcon;
-			public string m_strIconUrl;
-			public string m_strUninstall;
-			public string m_strAlias;
-			public bool m_bInstalled;
-			public string m_strPlatform;
-			public bool m_bFavourite;
-			public bool m_bHidden;
-			public List<string> m_tags;
-			public DateTime m_dateLastRun;
-			public ushort m_rating;
-			public uint m_numRuns;
-			*/
-
-			public ImportGameData(string strPlatform, GameData gameData)
-			//public ImportGameData(string strID, string strTitle, string strLaunch, string strLaunchUrl, string strIconPath, string strIconUrl, string strUninstall, string strAlias, bool bInstalled, string strPlatform, bool bFavourite = false, bool bHidden = false, List<string> tags = default, DateTime dateLastRun = default, ushort rating = 0, uint numRuns = 0)
-			{
-				m_strPlatform = strPlatform;
-				m_gameData = gameData;
-				/*
-				m_strID = strID;
-				m_strTitle = strTitle;
-				m_strLaunch = strLaunch;
-				m_strLaunchUrl = strLaunchUrl;
-				m_strIcon = strIconPath;
-				m_strIconUrl = strIconUrl;
-				m_strUninstall = strUninstall;
-				m_strAlias = strAlias;
-				m_bInstalled = bInstalled;
-				m_strPlatform = strPlatform;
-				m_bFavourite = bFavourite;
-				m_bHidden = bHidden;
-				m_tags = tags ?? new List<string>();
-				m_dateLastRun = dateLastRun;
-				m_rating = rating;
-				m_numRuns = numRuns;
-				*/
-			}
+			public string m_strPlatform = strPlatform;
+			public GameData m_gameData = gameData;
 		}
 
 		/// <summary>
@@ -775,21 +732,6 @@ namespace GameLauncher_Console
 		public static string GetPlatformString(GamePlatform value)
 		{
 			return GetDescription(value);
-			/*
-			Type type = value.GetType();
-			string name = Enum.GetName(type, value);
-			if (name != null)
-			{
-				FieldInfo field = type.GetField(name);
-				if (field != null && Attribute.GetCustomAttribute(field,
-					typeof(DescriptionAttribute)) is DescriptionAttribute attr)
-				{
-					return attr.Description;
-				}
-				return name;
-			}
-			return "";
-			*/
 		}
 
 		/// <summary>
