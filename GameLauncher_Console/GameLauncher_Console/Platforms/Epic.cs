@@ -59,7 +59,7 @@ namespace GameLauncher_Console
 			string pathLeg = CConfig.GetConfigString(CConfig.CFG_PATHLEG);
 			if (string.IsNullOrEmpty(pathLeg))
 				useLeg = false;
-			if (!pathLeg.Contains(@"\") && !pathLeg.Contains("/")) // legendary.exe in current directory
+			if (!pathLeg.Contains('\\') && !pathLeg.Contains('/')) // legendary.exe in current directory
 				pathLeg = Path.Combine(Directory.GetCurrentDirectory(), pathLeg);
 
 			string id = GetGameID(game.ID);
@@ -96,7 +96,7 @@ namespace GameLauncher_Console
 			string pathLeg = CConfig.GetConfigString(CConfig.CFG_PATHLEG);
 			if (string.IsNullOrEmpty(pathLeg))
 				useLeg = false;
-			if (!pathLeg.Contains(@"\") && !pathLeg.Contains("/")) // legendary.exe in current directory
+			if (!pathLeg.Contains('\\') && !pathLeg.Contains('/')) // legendary.exe in current directory
 				pathLeg = Path.Combine(Directory.GetCurrentDirectory(), pathLeg);
 
 			string id = GetGameID(game.ID);
@@ -149,7 +149,7 @@ namespace GameLauncher_Console
 			string pathLeg = CConfig.GetConfigString(CConfig.CFG_PATHLEG);
 			if (string.IsNullOrEmpty(pathLeg))
 				useLeg = false;
-			if (!pathLeg.Contains(@"\") && !pathLeg.Contains("/")) // legendary.exe in current directory
+			if (!pathLeg.Contains('\\') && !pathLeg.Contains('/')) // legendary.exe in current directory
 				pathLeg = Path.Combine(Directory.GetCurrentDirectory(), pathLeg);
 			if (useLeg && File.Exists(pathLeg))
 			{
@@ -243,7 +243,7 @@ namespace GameLauncher_Console
 				OperationStatus os = Base64.DecodeFromUtf8InPlace(byteSpan, out int numBytes);
 				if (os == OperationStatus.Done)
 				{
-					byteSpan = byteSpan.Slice(0, numBytes);
+					byteSpan = byteSpan[..numBytes];
 					string strCatalogData = Encoding.UTF8.GetString(byteSpan);
 					using JsonDocument document = JsonDocument.Parse(strCatalogData, jsonTrailingCommas);
 					foreach (JsonElement element in document.RootElement.EnumerateArray())

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Versioning;
+
 //using System.Runtime.InteropServices;
 //using System.Text;
 using System.Windows.Forms;
@@ -563,7 +565,8 @@ namespace GameLauncher_Console
 		/// <returns>Value of the translated key or original key if not found</returns>
 		public static string KeyToUSFormat(string strCKeyName)
 		{
-			if (InputLanguage.CurrentInputLanguage.LayoutName == "US")
+			if (OperatingSystem.IsWindowsVersionAtLeast(6, 1) &&
+				InputLanguage.CurrentInputLanguage.LayoutName == "US")
 			{
 				switch (strCKeyName)
 				{
@@ -603,8 +606,12 @@ namespace GameLauncher_Console
 		/// <returns>Value of the translated key or original key if not found</returns>
 		public static string ShortenKeyName(string strCKeyName)
 		{
-			if (InputLanguage.CurrentInputLanguage.LayoutName == "US")
+			if (OperatingSystem.IsWindowsVersionAtLeast(6, 1) &&
+				InputLanguage.CurrentInputLanguage.LayoutName == "US")
+			{
 				strCKeyName = KeyToUSFormat(strCKeyName);
+			}
+
 			switch (strCKeyName)
 			{
 				case "Backspace":

@@ -40,8 +40,12 @@ namespace GameLauncher_Console
 #endif
 			SetProcessDpiAwarenessContext(GetAwarenessFromDpiAwarenessContext(GetThreadDpiAwarenessContext()) + 
 				(int)DpiAwarenessContext.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-			Application.EnableVisualStyles();
-			//Application.SetCompatibleTextRenderingDefault(false);
+
+			if (OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+			{
+				Application.EnableVisualStyles();
+				//Application.SetCompatibleTextRenderingDefault(false);
+			}
 
 			string imgFolder = Path.Combine(CDock.currentPath, IMAGE_FOLDER_NAME);
 			string gameFolder = Path.Combine(CDock.currentPath, GAME_FOLDER_NAME);

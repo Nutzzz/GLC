@@ -64,9 +64,9 @@ namespace GameLauncher_Console
 			void Compare(IShellItem psi, uint hint, out int piOrder);
 		};
 		
-		[ComImportAttribute()]
-		[GuidAttribute("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
-		[InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+		[ComImport()]
+		[Guid("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
+		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		public interface IShellItemImageFactory
 		{
 			void GetImage(
@@ -85,7 +85,7 @@ namespace GameLauncher_Console
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern IntPtr GetConsoleWindow();
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern IntPtr CreateFile(
 			string lpFileName,
 			int dwDesiredAccess,

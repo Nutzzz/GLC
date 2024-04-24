@@ -23,7 +23,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
         /// Ignored during title searches
         /// </summary>
         private static readonly string[] _articles =
-        {
+        [
             "The ",								// English definite
 			"A ", "An ",						// English indefinite
 			/*
@@ -34,7 +34,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
 			"Der", "Das",						//, "Die" [English word] // German definite
 			"Ein", "Eine"						// German indefinite
 			*/
-        };
+        ];
 
         // Due to C#'s limitations, every query will come with a lot of bloated boilerplate code
         // Best thing to do for now is to hide them away in a region and just use them. I will have to return to them one day
@@ -224,7 +224,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
 
         private static CQryGame m_qryGame = new();
         private static CDbAttribute m_gameAttribute = new("Game");
-        private static GameSet m_currentGames = new();
+        private static GameSet m_currentGames = [];
 
         /// <summary>
         /// Dictionary collection implementation for the game object
@@ -279,7 +279,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
             {
                 // TODO. all, fav, new, hidden games
                 // TODO. ignore article
-                List<int> outGameIDs = new();
+                List<int> outGameIDs = [];
 
                 m_qryGameSort.MakeFieldsNull();
                 m_qryGameSort.PlatformFK = Platform; // Using current platform
@@ -373,7 +373,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
                 // Default rest
                 GameID          = 0;
                 Icon            = "";
-                Tags            = new List<string>() { "" };
+                Tags            = [""];
                 IsInstalled     = false;
                 IsFavourite     = false;
                 IsNew           = false;
@@ -447,7 +447,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
             // No point running the query if we want the same information
             if(m_currentGames.Platform == platformFK && m_currentGames.Count > 0)
             {
-                return m_currentGames.Values.ToList();
+                return [.. m_currentGames.Values];
             }
             m_currentGames.Clear();
             m_currentGames.Platform = platformFK;
@@ -462,12 +462,12 @@ namespace CGame_Test // TODO: GameLauncher_Console
                     m_currentGames[m_qryGame.Title] = new GameObject(m_qryGame);
                 } while(m_qryGame.Fetch());
             }
-            return m_currentGames.Values.ToList();
+            return [.. m_currentGames.Values];
         }
 
         public static HashSet<GameObject> GetAllGames()
         {
-            HashSet<GameObject> outHashSet = new();
+            HashSet<GameObject> outHashSet = [];
             m_qryGame.MakeFieldsNull();
             if(m_qryGame.Select() == SQLiteErrorCode.Ok)
             {
@@ -619,8 +619,8 @@ namespace CGame_Test // TODO: GameLauncher_Console
         /// <param name="games">Game set to merge</param>
         public static void MergeGameSets(GameSet games)
         {
-            HashSet<GameObject> newGames = games.Values.ToHashSet();
-            HashSet<GameObject> allGames = GetAllGames().ToHashSet();
+            HashSet<GameObject> newGames = [.. games.Values];
+            HashSet<GameObject> allGames = [.. GetAllGames()];
 
             HashSet<GameObject> toAdd = new(newGames);
             toAdd.ExceptWith(allGames);

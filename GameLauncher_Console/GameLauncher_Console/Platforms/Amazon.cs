@@ -23,7 +23,7 @@ namespace GameLauncher_Console
 		public const string START_GAME			= PROTOCOL + "play/";
 		public const string UNINST_GAME			= @"__InstallData__\Amazon Game Remover.exe";
         public const string UNINST_GAME_ARGS	= "-m Game -p";
-        private const string AMAZON_DB			= @"Amazon Games\Data\Games\Sql\GameInstallInfo.sqlite"; // AppData\Local
+        //private const string AMAZON_DB			= @"Amazon Games\Data\Games\Sql\GameInstallInfo.sqlite"; // AppData\Local
 		private const string AMAZON_OWN_DB		= @"Amazon Games\Data\Games\Sql\GameProductInfo.sqlite"; // AppData\Local
 		//private const string AMAZON_UNREG		= @"{4DD10B06-78A4-4E6F-AA39-25E9C38FA568}"; // HKCU64 Uninstall
 

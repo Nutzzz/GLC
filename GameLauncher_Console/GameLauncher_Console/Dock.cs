@@ -67,7 +67,7 @@ namespace GameLauncher_Console
 		public static readonly string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
 		public static readonly string description = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
 
-		public static readonly List<string> supportedImages = new() { "ICO", "PNG", "JPG", "JPE", "JPEG", "GIF", "BMP", "TIF", "TIFF", "EPR", "EPRT", "EXI", "EXIF" };
+		public static readonly List<string> supportedImages = ["ICO", "PNG", "JPG", "JPE", "JPEG", "GIF", "BMP", "TIF", "TIFF", "EPR", "EPRT", "EXI", "EXIF"];
 		public static bool noInteractive = false;
 		public static Size sizeIcon;
 		public static Size sizeImage;
@@ -77,7 +77,7 @@ namespace GameLauncher_Console
 		/// Array of string containing the content of the help screen.
 		/// </summary>
 		private readonly string[] m_helpLines =
-		{
+		[
 		//  0|-------|---------|---------|---------|---------|---------|---------|---------|80
 			" This program will scan your system for installed video games and display",
 			" them as a list. The following platforms are supported: *Amazon *BattleNet",
@@ -87,7 +87,7 @@ namespace GameLauncher_Console
 			" The games list and configuration are stored in .json files in the same folder",
 			" as this program. You can manually add games by placing a shortcut (.lnk) in",
 			" the \'CustomGames\' subfolder."
-		};
+		];
 
 		/// <summary>
 		/// Constructor
@@ -378,7 +378,7 @@ namespace GameLauncher_Console
 						{
 							if (!cfgv.dontSaveChanges) CJsonWrapper.ExportConfig();
 							ClearNewGames();
-							CJsonWrapper.ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
+							CJsonWrapper.ExportGames([.. GetPlatformGameList(GamePlatform.All)]);
 							Console.Clear();
 						}
 						return;
@@ -724,7 +724,7 @@ namespace GameLauncher_Console
 							else
 							{
 								RemoveGame(selectedGame);
-								CJsonWrapper.ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
+								CJsonWrapper.ExportGames([.. GetPlatformGameList(GamePlatform.All)]);
 								m_nCurrentSelection--;
 								if (GetPlatformGameList((GamePlatform)m_nSelectedPlatform).ToList().Count < 1)
 									m_nSelectedPlatform = -1;
@@ -735,7 +735,7 @@ namespace GameLauncher_Console
 						case CConsoleHelper.DockSelection.cSel_Hide: // Remove from list
 							CLogger.LogInfo($"Hiding game: {selectedGame.Title}");
 							RemoveGame(selectedGame);
-							CJsonWrapper.ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
+							CJsonWrapper.ExportGames([.. GetPlatformGameList(GamePlatform.All)]);
 							//m_nCurrentSelection--;
 							m_nCurrentSelection = -1;
 							m_nSelectedGame = -1;
@@ -767,7 +767,7 @@ namespace GameLauncher_Console
 								(bool)CConfig.GetConfigBool(CConfig.CFG_USEFAVE),
 								(bool)CConfig.GetConfigBool(CConfig.CFG_USEINST),
 								true);
-							CJsonWrapper.ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
+							CJsonWrapper.ExportGames([.. GetPlatformGameList(GamePlatform.All)]);
 							if (m_nSelectedPlatform == (int)GamePlatform.Favourites &&
 								GetPlatformGameList(GamePlatform.Favourites).ToList().Count < 1)
 								m_nSelectedPlatform = -1;
@@ -1089,7 +1089,7 @@ namespace GameLauncher_Console
 						NormaliseFrequencies(selectedGame);
 						selectedGame.IncrementRuns();
 						selectedGame.SetRunDate();
-						matches = new List<CMatch>() { new CMatch(selectedGame.Title, 1, 100) };
+						matches = [new(selectedGame.Title, 1, 100)];
 						CJsonWrapper.ExportSearch(matches);
 						if (!cfgv.dontSaveChanges) CJsonWrapper.ExportConfig();
 
@@ -1173,7 +1173,7 @@ namespace GameLauncher_Console
 						Console.ReadLine();
 #endif
 						ClearNewGames();
-						CJsonWrapper.ExportGames(GetPlatformGameList(GamePlatform.All).ToList());
+						CJsonWrapper.ExportGames([.. GetPlatformGameList(GamePlatform.All)]);
 						return;
 					}
 					else  // game not installed
@@ -1309,16 +1309,16 @@ namespace GameLauncher_Console
 				}
 			}
 			else if (m_nSelectedPlatform < 0)	// show main menu (platform list)
-				nSelectionCode = m_dockConsole.DisplayMenu(cfgv, keys, cols, ref gameSearch, platformList.ToArray());
+				nSelectionCode = m_dockConsole.DisplayMenu(cfgv, keys, cols, ref gameSearch, [.. platformList]);
 			else if (m_nSelectedGame < 0)		// show game list
-				nSelectionCode = m_dockConsole.DisplayMenu(cfgv, keys, cols, ref gameSearch, GetPlatformTitles((GamePlatform)m_nSelectedPlatform).ToArray());
+				nSelectionCode = m_dockConsole.DisplayMenu(cfgv, keys, cols, ref gameSearch, [.. GetPlatformTitles((GamePlatform)m_nSelectedPlatform)]);
 		}
 
 		/// <summary>
 		/// Install the game
 		/// </summary>
 		/// <param name="game"></param>
-		private bool InstallGame(CGame game, CConfig.Colours cols)
+		private static bool InstallGame(CGame game, CConfig.Colours cols)
 		{
 			try
 			{
@@ -1468,7 +1468,7 @@ namespace GameLauncher_Console
 		/// Uninstall the game
 		/// </summary>
 		/// <param name="game"></param>
-		private bool UninstallGame(CGame game)
+		private static bool UninstallGame(CGame game)
 		{
 			try
 			{
@@ -1521,7 +1521,7 @@ namespace GameLauncher_Console
 		/// Start the game process
 		/// </summary>
 		/// <param name="game"></param>
-		private bool StartGame(CGame game)
+		private static bool StartGame(CGame game)
 		{
 			CLogger.LogInfo($"Starting game: {game.Title}");
 			Console.WriteLine($"Starting game: {game.Title}");

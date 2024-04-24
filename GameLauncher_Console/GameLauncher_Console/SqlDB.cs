@@ -20,7 +20,7 @@ namespace SqlDB
     public sealed class CSqlDB
     {
         private const string SQL_MAIN_DATA_SOURCE = "database.db";
-        private static CSqlDB m_instance = new CSqlDB();
+        private static CSqlDB m_instance = new();
 
         public static CSqlDB Instance
         {
@@ -41,7 +41,7 @@ namespace SqlDB
             {
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection("Data source=" + dataSource + ";Version=3;New=False;Compress=True;");
+            SQLiteConnection connection = new("Data source=" + dataSource + ";Version=3;New=False;Compress=True;");
             try
             {
                 CLogger.LogInfo("Connecting to Data Source " + dataSource);
@@ -257,7 +257,7 @@ namespace SqlDB
         {
             get
             {
-                int.TryParse(m_value, out int i);
+                _ = int.TryParse(m_value, out int i);
                 return i;
             }
             set { m_value = value.ToString(); }
@@ -267,7 +267,7 @@ namespace SqlDB
         {
             get
             {
-                double.TryParse(m_value, out double d);
+                _ = double.TryParse(m_value, out double d);
                 return d;
             }
             set { m_value = value.ToString(); }
@@ -323,7 +323,7 @@ namespace SqlDB
         private List<string> m_insertOrder;
         public CSqlRow() : base()
         {
-            m_insertOrder = new List<string>();
+            m_insertOrder = [];
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace SqlDB
             m_selectCondition = selectCondition;
             SelectExtraCondition = selectExtraCondition;
             m_selectResult = null;
-            m_sqlRow = new CSqlRow();
+            m_sqlRow = [];
         }
 
         public string SelectExtraCondition { get; set; }
@@ -513,7 +513,7 @@ namespace SqlDB
             int columnIndex = 0; // Which SQL column we're currently using
             int fMask = 0; // Field mask index
             int vMask = 0; // Value mask index
-            StringBuilder whereCondition = new StringBuilder(m_selectCondition);
+            StringBuilder whereCondition = new(m_selectCondition);
 
             //while(-1 < vMask && vMask < whereCondition.Length)
             while(true)
@@ -596,7 +596,7 @@ namespace SqlDB
         /// </summary>
         /// <param name="input">The input string</param>
         /// <returns>SQL-ready literal string</returns>
-        private string StringToLiteral(string input)
+        private static string StringToLiteral(string input)
         {
             if(input == null)
             {
@@ -794,20 +794,20 @@ namespace SqlDB
         /// <returns>String array with attribute values (in index order), or empty array if nothing</returns>
         public string[] GetStringValues(string attributeName)
         {
-            List<string> response = new List<string>();
+            List<string> response = [];
             m_qry.MakeFieldsNull();
             m_qry.ForeignKey    = MasterID;
             m_qry.AttributeName = attributeName;
             if(m_qry.Select() != SQLiteErrorCode.Ok)
             {
-                return response.ToArray(); // Empty array
+                return [.. response]; // Empty array
             }
 
             do
             {
                 response.Add(m_qry.AttributeValue ?? "");
             } while(m_qry.Fetch());
-            return response.ToArray();
+            return [.. response];
         }
 
         /// <summary>

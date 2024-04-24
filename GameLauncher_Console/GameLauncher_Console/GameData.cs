@@ -115,8 +115,8 @@ namespace GameLauncher_Console
 			public bool isAscending;
 		}
 
-		public static readonly List<string> _articles = new()
-		{
+		public static readonly List<string> _articles =
+		[
 			"The ",								// English definite
 			"A ", "An "							// English indefinite
 			/*
@@ -127,7 +127,7 @@ namespace GameLauncher_Console
 			"Der", "Das",						//, "Die" [English word] // German definite
 			"Ein", "Eine"						// German indefinite
 			*/
-		};
+		];
 
 		/// <summary>
 		/// Collect data from the registry or filesystem
@@ -423,7 +423,7 @@ namespace GameLauncher_Console
 
 			public void ClearTags()
 			{
-				m_tags = new List<string>();
+				m_tags = [];
 			}
 
 			/// <summary>
@@ -650,13 +650,13 @@ namespace GameLauncher_Console
 			return new CGameInstance(strID, strTitle, strLaunch, strLaunchUrl, strIconPath, strIconUrl, strUninstall, bIsInstalled, bIsFavourite, bIsNew, bIsHidden, strAlias, platformEnum, tags, dateLastRun, rating, numRuns, fOccurCount);
 		}
 
-		private static readonly Dictionary<GamePlatform, HashSet<CGame>> m_gameDictionary = new();
-		private static HashSet<CGame> m_searchResults = new();
-		private static HashSet<CGame> m_favourites = new();
-		private static HashSet<CGame> m_newGames = new();
-		private static HashSet<CGame> m_allGames = new();
-		private static HashSet<CGame> m_hidden = new();
-		private static HashSet<CGame> m_notInstalled = new();
+		private static readonly Dictionary<GamePlatform, HashSet<CGame>> m_gameDictionary = [];
+		private static HashSet<CGame> m_searchResults = [];
+		private static HashSet<CGame> m_favourites = [];
+		private static HashSet<CGame> m_newGames = [];
+		private static HashSet<CGame> m_allGames = [];
+		private static HashSet<CGame> m_hidden = [];
+		private static HashSet<CGame> m_notInstalled = [];
 
 		/// <summary>
 		/// Return the list of Game objects with specified platform
@@ -685,10 +685,10 @@ namespace GameLauncher_Console
 
 			else
 			{
-				if (m_gameDictionary.ContainsKey(platformEnum))
-					return m_gameDictionary[platformEnum];
+				if (m_gameDictionary.TryGetValue(platformEnum, out HashSet<CGame> value))
+					return value;
 				else
-					return new();
+					return [];
 			}
 		}
 
@@ -772,7 +772,7 @@ namespace GameLauncher_Console
 		/// <returns>GamePlatform enumerator, cast to int type. -1 on failed resolution</returns>
 		public static int GetPlatformEnum(string strPlatformName, bool bStripStr)
 		{
-			if (bStripStr) strPlatformName = strPlatformName.Contains(":") ? strPlatformName.Substring(0, strPlatformName.IndexOf(':')) : strPlatformName;
+			if (bStripStr) strPlatformName = strPlatformName.Contains(':') ? strPlatformName[..strPlatformName.IndexOf(':')] : strPlatformName;
 			return GetPlatformEnum(strPlatformName);
 		}
 
@@ -807,7 +807,7 @@ namespace GameLauncher_Console
 		/// <returns>List of strings</returns>
 		public static List<string> GetPlatformTitles(GamePlatform platformEnum)
 		{
-			List<string> platformTitles = new();
+			List<string> platformTitles = [];
 
 			if (platformEnum == GamePlatform.Search)
 			{
@@ -880,9 +880,9 @@ namespace GameLauncher_Console
 						platformTitles.Add(strTitle);
 				}
 			}
-			else if (m_gameDictionary.ContainsKey(platformEnum))
+			else if (m_gameDictionary.TryGetValue(platformEnum, out HashSet<CGame> value))
 			{
-				foreach (CGame game in m_gameDictionary[platformEnum])
+				foreach (CGame game in value)
 				{
 					string strTitle = game.Title;
 					if (game.IsFavourite)
@@ -929,7 +929,7 @@ namespace GameLauncher_Console
 
 			// If this is the first entry in the key, we need to initialise the list
 			if (!m_gameDictionary.ContainsKey(platformEnum))
-				m_gameDictionary[platformEnum] = new HashSet<CGame>();
+				m_gameDictionary[platformEnum] = [];
 
 			CGame game = CreateGameInstance(strID, strTitle, strLaunch, strLaunchUrl, strIconPath, strIconUrl, strUninstall, bIsInstalled, bIsFavourite, bIsNew, bIsHidden, strAlias, platformEnum, tags, dateLastRun, rating, numRuns, fOccurCount);
 			m_gameDictionary[platformEnum].Add(game);
@@ -959,7 +959,7 @@ namespace GameLauncher_Console
 			if (game != null)
 			{
 				if (!m_gameDictionary.ContainsKey(game.Platform))
-					m_gameDictionary[game.Platform] = new HashSet<CGame>();
+					m_gameDictionary[game.Platform] = [];
 
 				m_gameDictionary[game.Platform].Add(game);
 
@@ -1202,12 +1202,13 @@ namespace GameLauncher_Console
 		{
 			List<string> articles = _articles;
 			if (ignoreArticle)
-				articles = new List<string>() { };
+				articles = [];
 
-			List<Sorter> sortBy = new();
-
-			// Always start with alphabetic sort
-			sortBy.Add(new Sorter { method = CConsoleHelper.SortMethod.cSort_Alpha, columnName = "Title", isAscending = true });
+			List<Sorter> sortBy =
+			[
+				// Always start with alphabetic sort
+				new Sorter { method = CConsoleHelper.SortMethod.cSort_Alpha, columnName = "Title", isAscending = true },
+			];
 
 			// Rating, Frequency, or LastRunDate
 			if (sortMethod == CConsoleHelper.SortMethod.cSort_Rating)
@@ -1289,7 +1290,7 @@ namespace GameLauncher_Console
 								  new Type[] { source.AsQueryable().ElementType, property.Type },
 								  source.AsQueryable().Expression, Expression.Quote(lambda));
 
-			return source.AsQueryable().Provider.CreateQuery<T>(methodCallExpression).ToHashSet<T>();
+			return [.. source.AsQueryable().Provider.CreateQuery<T>(methodCallExpression)];
 		}
 
 		/// <summary>
@@ -1348,7 +1349,7 @@ namespace GameLauncher_Console
 
 			// truncate if necessary
 			if (alias.Length > maxLength)
-				return alias.Substring(0, maxLength);
+				return alias[..maxLength];
 			return alias;
 		}
 
@@ -1393,14 +1394,14 @@ namespace GameLauncher_Console
 		/// <param name="match">String to match</param>
 		public static Dictionary<string, int> FindMatchingTitles(string match, int max)
 		{
-			Dictionary<string, int> outDict = new();
+			Dictionary<string, int> outDict = [];
 			int i = 0;
 			m_searchResults.Clear();
 			match = match.ToLower();
 			foreach (CGame game in m_allGames)
 			{
-				string fullTitle = game.Title.StartsWith("*") ? game.Title[1..] : game.Title;
-				fullTitle = fullTitle.EndsWith(" [F]") || fullTitle.EndsWith(" [H]") ? fullTitle.ToLower().Substring(0, fullTitle.Length - 4) : fullTitle.ToLower();
+				string fullTitle = game.Title.StartsWith('*') ? game.Title[1..] : game.Title;
+				fullTitle = fullTitle.EndsWith(" [F]") || fullTitle.EndsWith(" [H]") ? fullTitle.ToLower()[..(fullTitle.Length - 4)] : fullTitle.ToLower();
 				string shortTitle = fullTitle;
 				/*
 				foreach (string prep in new List<string> { "for", "of", "to" })
@@ -1455,7 +1456,7 @@ namespace GameLauncher_Console
 					outDict.Add(game.Title, (int)Match.BeginSubtitle);  // low confidence
 					if (max > 0 && i >= max) break;
 				}
-				else if (fullTitle.Contains(" ") &&
+				else if (fullTitle.Contains(' ') &&
 					fullTitle[fullTitle.LastIndexOf(' ')..].StartsWith(match))
 				{
 					i++;
@@ -1463,7 +1464,7 @@ namespace GameLauncher_Console
 					outDict.Add(game.Title, (int)Match.BeginLastWord);  // low confidence
 					if (max > 0 && i >= max) break;
 				}
-				else if (fullTitle.Contains(" ") &&
+				else if (fullTitle.Contains(' ') &&
 					fullTitle.Contains(" " + match))
 				{
 					i++;
@@ -1482,12 +1483,12 @@ namespace GameLauncher_Console
 		/// <returns>Hashset of CGames</returns>
 		public static HashSet<CGame> MatchGame(string match)
 		{
-			HashSet<CGame> outSet = new();
+			HashSet<CGame> outSet = [];
 			match = match.ToLower();
 			foreach (CGame game in m_allGames)
 			{
-				string fullTitle = game.Title.StartsWith("*") ? game.Title[1..] : game.Title;
-				fullTitle = fullTitle.EndsWith(" [F]") || fullTitle.EndsWith(" [H]") ? fullTitle.ToLower().Substring(0, fullTitle.Length - 4) : fullTitle.ToLower();
+				string fullTitle = game.Title.StartsWith('*') ? game.Title[1..] : game.Title;
+				fullTitle = fullTitle.EndsWith(" [F]") || fullTitle.EndsWith(" [H]") ? fullTitle.ToLower()[..(fullTitle.Length - 4)] : fullTitle.ToLower();
 				string shortTitle = fullTitle;
 				/*
 				foreach (string prep in new List<string> { "for", "of", "to" })
@@ -1504,7 +1505,7 @@ namespace GameLauncher_Console
 				if (game.Alias.StartsWith(match) ||
 					shortTitle.StartsWith(match) ||
 					fullTitle.StartsWith(match) ||
-					(fullTitle.Contains(" ") &&
+					(fullTitle.Contains(' ') &&
 						fullTitle[fullTitle.LastIndexOf(' ')..].StartsWith(match)))  // match last word
 				{
 					outSet.Add(game);

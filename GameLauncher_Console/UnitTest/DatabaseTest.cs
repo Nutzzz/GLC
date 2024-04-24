@@ -287,15 +287,19 @@ namespace UnitTest
             CSqlDB.Instance.Execute(qry);
 
             // Read from database (should fail)
-            CTest_SelectQry qrySel = new CTest_SelectQry();
-            qrySel.PlatformID = 1;
+            CTest_SelectQry qrySel = new()
+            {
+                PlatformID = 1
+            };
             Assert.AreEqual(qrySel.Select(), SQLiteErrorCode.NotFound);
 
             // Insert into database
-            CTest_InsertQry qryIns = new CTest_InsertQry();
-            qryIns.PlatformID  = 1;
-            qryIns.Name        = "test";
-            qryIns.Description = "PlatformID 1";
+            CTest_InsertQry qryIns = new()
+            {
+                PlatformID = 1,
+                Name = "test",
+                Description = "PlatformID 1"
+            };
             Assert.AreEqual(qryIns.Insert(), SQLiteErrorCode.Ok);
 
             // Try again
@@ -314,17 +318,21 @@ namespace UnitTest
         public void Test_UpdateRow()
         {
             // Get initial row
-            CTest_SelectQry qrySel = new CTest_SelectQry();
-            qrySel.PlatformID = 1;
+            CTest_SelectQry qrySel = new()
+            {
+                PlatformID = 1
+            };
             Assert.AreEqual(qrySel.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qrySel.PlatformID, 1);
             Assert.AreEqual(qrySel.Name, "test");
             Assert.AreEqual(qrySel.Description, "PlatformID 1");
 
             // Update database row
-            CTest_UpdateQry qryUpd = new CTest_UpdateQry();
-            qryUpd.PlatformID = 1;
-            qryUpd.Description = "Updated PlatformID 1";
+            CTest_UpdateQry qryUpd = new()
+            {
+                PlatformID = 1,
+                Description = "Updated PlatformID 1"
+            };
             Assert.AreEqual(qryUpd.Update(), SQLiteErrorCode.Ok);
 
             // Read again
@@ -342,16 +350,20 @@ namespace UnitTest
         public void Test_DeleteRow()
         {
             // Get initial row
-            CTest_SelectQry qrySel = new CTest_SelectQry();
-            qrySel.PlatformID = 1;
+            CTest_SelectQry qrySel = new()
+            {
+                PlatformID = 1
+            };
             Assert.AreEqual(qrySel.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qrySel.PlatformID, 1);
             Assert.AreEqual(qrySel.Name, "test");
             Assert.AreEqual(qrySel.Description, "PlatformID 1");
 
             // Delete database row
-            CTest_DeleteQry qryDel = new CTest_DeleteQry();
-            qryDel.PlatformID = 1;
+            CTest_DeleteQry qryDel = new()
+            {
+                PlatformID = 1
+            };
             Assert.AreEqual(qryDel.Delete(), SQLiteErrorCode.Ok);
 
             // Read again
@@ -365,7 +377,7 @@ namespace UnitTest
         public void Test_ReadManyColumns()
         {
             CSqlDB.Instance.Execute("insert into Platform (PlatformID, Name, Description) VALUES (2, 'test 2', 'PlatformID 2')");
-            CTest_SelectManyQry qry = new CTest_SelectManyQry();
+            CTest_SelectManyQry qry = new();
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qry.PlatformID, 1);
             Assert.AreEqual(qry.Name, "test");
@@ -383,18 +395,22 @@ namespace UnitTest
         public void Test_InsertDuplicateValue()
         {
             // Read from database
-            CTest_SelectQry qrySel = new CTest_SelectQry();
-            qrySel.PlatformID = 1;
+            CTest_SelectQry qrySel = new()
+            {
+                PlatformID = 1
+            };
             Assert.AreEqual(qrySel.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qrySel.PlatformID, 1);
             Assert.AreEqual(qrySel.Name, "test");
             Assert.AreEqual(qrySel.Description, "PlatformID 1");
 
             // Insert into database
-            CTest_InsertQry qryIns = new CTest_InsertQry();
-            qryIns.PlatformID = 1;
-            qryIns.Name = "test";
-            qryIns.Description = "PlatformID 1";
+            CTest_InsertQry qryIns = new()
+            {
+                PlatformID = 1,
+                Name = "test",
+                Description = "PlatformID 1"
+            };
             Assert.AreNotEqual(qryIns.Insert(), SQLiteErrorCode.Ok);
         }
 
@@ -404,11 +420,12 @@ namespace UnitTest
         [TestMethod]
         public void Test_MultiSelectQuery_TwoParams()
         {
-            CTest_SelectMultiParamQry qry = new CTest_SelectMultiParamQry();
-
-            // Find data that does not exist (should fail)
-            qry.Name = "test";
-            qry.Description = "PlatformID 2";
+            CTest_SelectMultiParamQry qry = new()
+            {
+                // Find data that does not exist (should fail)
+                Name = "test",
+                Description = "PlatformID 2"
+            };
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.NotFound);
 
             // Find data that does exist
@@ -425,11 +442,12 @@ namespace UnitTest
         [TestMethod]
         public void Test_MultiSelectQuery_OneParam()
         {
-            CTest_SelectMultiParamQry qry = new CTest_SelectMultiParamQry();
-
-            // Find data that does not exist (should fail)
-            qry.Name = "test";
-            qry.Description = "PlatformID 2";
+            CTest_SelectMultiParamQry qry = new()
+            {
+                // Find data that does not exist (should fail)
+                Name = "test",
+                Description = "PlatformID 2"
+            };
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.NotFound);
 
             // Find data that does exist
@@ -444,10 +462,11 @@ namespace UnitTest
         [TestMethod]
         public void Test_MultiPurposeQuery()
         {
-            CTest_MultiQry qry = new CTest_MultiQry();
-
-            // Try to read (should fail)
-            qry.PlatformID = 10;
+            CTest_MultiQry qry = new()
+            {
+                // Try to read (should fail)
+                PlatformID = 10
+            };
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.NotFound);
             qry.MakeFieldsNull();
 
@@ -485,8 +504,10 @@ namespace UnitTest
             // Add a game
             Assert.AreEqual(CSqlDB.Instance.Execute("INSERT INTO Game (GameID, Identifier, Title, Alias, Launch) VALUES (1, 'testID', 'Test Game', 'test', 'test.exe')"), SQLiteErrorCode.Ok);
 
-            CDbAttribute gameAttribute = new CDbAttribute("Game");
-            gameAttribute.MasterID = 1;
+            CDbAttribute gameAttribute = new("Game")
+            {
+                MasterID = 1
+            };
 
             Assert.AreEqual(gameAttribute.SetStringValue("TEST_ATTRIBUTE", "TEST_VALUE", 0), SQLiteErrorCode.Ok); // Insert first attribute
             Assert.AreEqual(gameAttribute.GetStringValue("TEST_ATTRIBUTE", 0), "TEST_VALUE");  // Read
@@ -521,8 +542,10 @@ namespace UnitTest
                 "(5,  'test 5',  'PlatformID 5'), " +
                 "(10, 'test 10', 'PlatformID 10')"), SQLiteErrorCode.Ok);
 
-            CTest_AdvancedGreaterThanQry qry = new CTest_AdvancedGreaterThanQry();
-            qry.PlatformID = 3;
+            CTest_AdvancedGreaterThanQry qry = new()
+            {
+                PlatformID = 3
+            };
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qry.PlatformID, 10);
             Assert.AreEqual(qry.Name, "test 10");
@@ -549,8 +572,10 @@ namespace UnitTest
                 "(5,  'gog',        'PlatformID 5'), " +
                 "(10, 'PLATFORM C', 'PlatformID 10')"), SQLiteErrorCode.Ok);
 
-            CTest_AdvancedLikeQry qry = new CTest_AdvancedLikeQry();
-            qry.Name = "platform"; // Should be case-insensitive
+            CTest_AdvancedLikeQry qry = new()
+            {
+                Name = "platform" // Should be case-insensitive
+            };
             Assert.AreEqual(qry.Select(), SQLiteErrorCode.Ok);
             Assert.AreEqual(qry.PlatformID, 1);
             Assert.AreEqual(qry.Name, "platform A");
