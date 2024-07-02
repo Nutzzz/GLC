@@ -507,14 +507,10 @@ namespace GameLauncher_Console
 					}
 					else
 					{
-						var options = new JsonDocumentOptions
-						{
-							AllowTrailingCommas = true
-						};
 						string rgGames = gameList.InnerText.Remove(0, gameList.InnerText.IndexOf('['));
 						rgGames = rgGames.Remove(rgGames.IndexOf(';'));
 
-						using JsonDocument document = JsonDocument.Parse(@rgGames, options);
+						using JsonDocument document = JsonDocument.Parse(@rgGames, jsonTrailingCommas);
 						foreach (JsonElement rggame in document.RootElement.EnumerateArray())
 						{
 							ulong id = GetULongProperty(rggame, "appid");

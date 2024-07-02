@@ -229,13 +229,6 @@ namespace GameLauncher_Console
 			var cursor = Console.CursorLeft;
 			if (!bOnlyCustom)
 			{
-				Settings settings = new()
-				{
-					BaseOnly = true,
-					GamesOnly = false,
-					InstalledOnly = false,
-					OwnedOnly = true,
-				};
 				foreach (IPlatform platform in _platforms)
 				{
 					//if (bFirstScan)
@@ -247,7 +240,7 @@ namespace GameLauncher_Console
 					//	Console.Write(".");
 					CLogger.LogInfo("Looking for {0} games...", platform.Description);
 
-					platform.GetGames(gameDataList, settings, bExpensiveIcons);
+					platform.GetGames(gameDataList, gcSettings, bExpensiveIcons);
 
 					//if (bFirstScan)
 					{
