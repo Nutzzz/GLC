@@ -2209,7 +2209,10 @@ namespace GameLauncher_Console
 		{
 			if (!string.IsNullOrEmpty(url))
 			{
-				string ext = Path.GetExtension(url);
+				string stripFile = url;
+				if (url.Contains('?'))
+					stripFile = url[..url.IndexOf('?')];
+				string ext = Path.GetExtension(stripFile);
 				if (string.IsNullOrEmpty(ext))
 					ext = ".jpg";
 				string iconFile = Path.Combine(currentPath, IMAGE_FOLDER_NAME,
