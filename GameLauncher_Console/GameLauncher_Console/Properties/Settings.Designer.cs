@@ -229,6 +229,30 @@ namespace GameLauncher_Console.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool flag_do_not_scan_dlc {
+            get {
+                return ((bool)(this["flag_do_not_scan_dlc"]));
+            }
+            set {
+                this["flag_do_not_scan_dlc"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool flag_do_not_scan_nongame_software {
+            get {
+                return ((bool)(this["flag_do_not_scan_nongame_software"]));
+            }
+            set {
+                this["flag_do_not_scan_nongame_software"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool flag_do_not_scan_not_installed_games {
             get {
@@ -242,12 +266,12 @@ namespace GameLauncher_Console.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool flag_do_not_scan_nongame_software {
+        public bool flag_do_not_scan_unowned_games {
             get {
-                return ((bool)(this["flag_do_not_scan_nongame_software"]));
+                return ((bool)(this["flag_do_not_scan_unowned_games"]));
             }
             set {
-                this["flag_do_not_scan_nongame_software"] = value;
+                this["flag_do_not_scan_unowned_games"] = value;
             }
         }
         

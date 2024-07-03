@@ -17,14 +17,6 @@ namespace GameLauncher_Console
 	/// </summary>
 	public static class CGameData
 	{
-		public static Settings gcSettings = new()
-		{
-			BaseOnly = true,
-			GamesOnly = true,
-			InstalledOnly = false,
-			OwnedOnly = true,
-		};
-
 		/// <summary>
 		/// Enumerator containing currently supported game platforms
 		/// </summary>
