@@ -229,17 +229,21 @@ namespace GameLauncher_Console
 			var cursor = Console.CursorLeft;
 			if (!bOnlyCustom)
 			{
+				if (!bool.TryParse(CConfig.CFG_BASEONLY, out var baseOnly))
+					baseOnly = true;
 				if (!bool.TryParse(CConfig.CFG_GAMEONLY, out var gamesOnly))
 					gamesOnly = true;
 				if (!bool.TryParse(CConfig.CFG_INSTONLY, out var installedOnly))
 					installedOnly = false;
+				if (!bool.TryParse(CConfig.CFG_OWNONLY, out var ownedOnly))
+					ownedOnly = true;
 
-				Settings settings = new()
+				Settings gcSettings = new()
 				{
-					BaseOnly = true,
+					BaseOnly = baseOnly,
 					GamesOnly = gamesOnly,
 					InstalledOnly = installedOnly,
-					OwnedOnly = true,
+					OwnedOnly = ownedOnly,
 				};
 				foreach (IPlatform platform in _platforms)
 				{
@@ -252,7 +256,7 @@ namespace GameLauncher_Console
 					//	Console.Write(".");
 					CLogger.LogInfo("Looking for {0} games...", platform.Description);
 
-					platform.GetGames(gameDataList, settings, bExpensiveIcons);
+					platform.GetGames(gameDataList, gcSettings, bExpensiveIcons);
 
 					//if (bFirstScan)
 					{

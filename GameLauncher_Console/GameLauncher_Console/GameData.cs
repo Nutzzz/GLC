@@ -3,10 +3,12 @@ using Logger;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 
 namespace GameLauncher_Console
 {
@@ -15,6 +17,14 @@ namespace GameLauncher_Console
 	/// </summary>
 	public static class CGameData
 	{
+		public static Settings gcSettings = new()
+		{
+			BaseOnly = true,
+			GamesOnly = true,
+			InstalledOnly = false,
+			OwnedOnly = true,
+		};
+
 		/// <summary>
 		/// Enumerator containing currently supported game platforms
 		/// </summary>
