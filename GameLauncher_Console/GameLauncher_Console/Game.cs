@@ -15,7 +15,7 @@ namespace CGame_Test // TODO: GameLauncher_Console
     public static class CGame
     {
         // AttributeName definitions
-        private static readonly string _a_game_tag = "TAG";
+        //private static readonly string _a_game_tag = "TAG";
 
         /// <summary>
         /// Game title articles.

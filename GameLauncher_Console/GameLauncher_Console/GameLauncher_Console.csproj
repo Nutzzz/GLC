@@ -129,9 +129,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PureOrigin.API\Src\PureOrigin.API\PureOrigin.API.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="GameCollector" Version="4.2.4.1" />
     <PackageReference Include="GameCollector.EmuHandlers.Dolphin" Version="4.2.4.1" />
     <PackageReference Include="GameCollector.EmuHandlers.MAME" Version="4.2.4.1" />
@@ -159,14 +156,12 @@
     <PackageReference Include="GameCollector.StoreHandlers.Xbox" Version="4.2.4.1" />
     <PackageReference Include="protobuf-net" Version="3.2.30" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.30" />
-    <PackageReference Include="PureOrigin.API" Version="1.0.3" />
     <PackageReference Include="SHA3.Net" Version="2.0.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="SQLite" Version="3.13.0" />
@@ -176,7 +171,7 @@
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DockConsole.cs" />
