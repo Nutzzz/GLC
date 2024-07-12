@@ -52,7 +52,7 @@ An interactive console allows the user to navigate via menus using the arrows an
 ## Using
 ***[Click here to download the latest binary release.](../../releases/latest/download/glc.exe)*** The app is portable (does not require installation). However, we'd recommend moving it to a dedicated folder before running it because several support files and folders are automatically created in the same location.
 
-The .NET 8 Windows x64 runtime is required. You can [download it here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), or using the command line run: `winget install Microsoft.DotNet.DesktopRuntime.8`
+The .NET 8 Windows x64 runtime is required. You can [download it here](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.7-windows-x64-installer), or using the command line run: `winget install Microsoft.DotNet.DesktopRuntime.8`
 
 To change the default configuration options, you can edit glc.ini in v1.2+ (or glc-cfg.json in v1.1), including custom keys, colours, text, input, layout, sorting, images, etc.
 
